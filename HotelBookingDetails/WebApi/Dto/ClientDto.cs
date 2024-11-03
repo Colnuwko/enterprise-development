@@ -1,22 +1,19 @@
-﻿using HotelBookingDetails.Domain;
+﻿namespace WebApi.Dto;
 
-namespace WebApi.Dto
-{
-    public class ClientDto
-    {    
-        /// <summary>
-         /// Имя
-         /// </summary>
-        public required string FullName { get; set; }
+public class ClientDto
+{    
+    /// <summary>
+     /// Имя
+     /// </summary>
+    public required string FullName { get; set; }
 
-        /// <summary>
-        /// Пасспортные данные
-        /// </summary>
-        public required Passport PassportData { get; set; }
+    /// <summary>
+    /// id Пасспортныx данных
+    /// </summary>
+    public required int PassportDataId { get; set; }
 
-        /// <summary>
-        /// День рождения
-        /// </summary>
-        public required DateOnly Birthday { get; set; }
-    }
+    /// <summary>
+    /// День рождения
+    /// </summary>
+    public required DateOnly Birthday { get; set; }
 }

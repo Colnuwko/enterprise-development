@@ -10,6 +10,12 @@ public class Mapping: Profile
     public Mapping()
     {
         CreateMap<Client, ClientDto>().ReverseMap();
+        CreateMap<Hotel, HotelDto>().ReverseMap();
+        CreateMap<Room, RoomDto>().ReverseMap();
+        CreateMap<ReservedRooms, ReservedRoomsDto>().ReverseMap();
+        CreateMap<TypeRoom, TypeRoomDto>().ReverseMap();
+        CreateMap<Passport, PassportDto>().ReverseMap();
+
     }
 
 }
