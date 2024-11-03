@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen(options =>
    
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename)); 
 });
-builder.Services.AddSingleton<IRepository, Repository>();
+builder.Services.AddSingleton<IRepositoryClient, RepositoryClient>();
 builder.Services.AddAutoMapper(typeof(Mapping));
 
 var app = builder.Build();

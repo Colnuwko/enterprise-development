@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ClientController(IRepository repository, IMapper mapper) : ControllerBase
+public class ClientController(IRepositoryClient repository, IMapper mapper) : ControllerBase
 {
     
     

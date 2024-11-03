@@ -3,7 +3,7 @@
 /// <summary>
 /// Паспорт
 /// </summary>
-public struct Passport
+public class Passport
 {
     /// <summary>
     /// Идентификатор паспорта
