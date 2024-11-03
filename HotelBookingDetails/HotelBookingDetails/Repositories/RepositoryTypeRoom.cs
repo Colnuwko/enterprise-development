@@ -19,7 +19,7 @@ public class RepositoryTypeRoom : IRepositoryTypeRoom
     public bool DeleteTypeRoom(int id)
     {
         var typeRoom = GetTypeRoomById(id);
-        if (typeRoom != null) { return false; }
+        if (typeRoom == null) { return false; }
         _typeRoom.Remove(typeRoom);
         return true;
     }

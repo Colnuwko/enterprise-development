@@ -1,6 +1,6 @@
 ﻿namespace HotelBookingDetails.Domain.Repositories;
 
-internal interface IRepositoryRoom
+public interface IRepositoryRoom
 {
     public IEnumerable<Room> GetRooms();
 

@@ -9,21 +9,25 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ClientController(IRepositoryClient repository, IMapper mapper) : ControllerBase
+public class ClientController(IRepositoryClient repository, IRepositoryPassport repositoryPassport, IMapper mapper) : ControllerBase
 {
     
     
     /// <summary>
-    /// fsdfsdfdsf
+    /// Запрос возвращающий список всех клиентов
     /// </summary>
-    /// <returns></returns>
+    /// <returns>список клиентов</returns>
     [HttpGet]
     public ActionResult<IEnumerable<Client>> Get()
     {
         return Ok(repository.GetClients());
     }
 
-    // GET api/<ClientController>/5
+    /// <summary>
+    /// Запрос клиента по идентификатору
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Объект класса клиент</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Client), 200)]
     public ActionResult<Client> Get(int id)
@@ -35,24 +39,43 @@ public class ClientController(IRepositoryClient repository, IMapper mapper) : Co
         return Ok(client);
     }
 
-    // POST api/<ClientController>
+    /// <summary>
+    /// Запрос на добавления клиента
+    /// </summary>
+    /// <param name="client"></param>
+    /// <returns>Код выполнения</returns>
     [HttpPost]
     public IActionResult Post([FromBody] ClientDto client)
     {
         var value = mapper.Map<Client>(client);
+        value.PassportData =  repositoryPassport.GetPassportById(client.PassportDataId);
+        if (value.PassportData == null) { return NotFound("Не найдены паспортные данные по заданому id"); }
         repository.PostClient(value);
         return Ok();
     }
 
-    // PUT api/<ClientController>/5
+    /// <summary>
+    /// Запрос на изменение клиента по идентификатору
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="client"></param>
+    /// <returns>Код выполнения</returns>
     [HttpPut("{id}")]
-    public IActionResult Put(int id, [FromBody] Client client)
+    public IActionResult Put(int id, [FromBody] ClientDto client)
     {
-        repository.PutClient(id, client);
+        
+        if (repository.GetClientById(id) == null) { return NotFound("Клиент с заданным id не найден"); }
+        if (repositoryPassport.GetPassportById(client.PassportDataId) == null) { return NotFound("Не найдены паспортные данные по заданому id"); }
+        var value = mapper.Map<Client>(client);
+        repository.PutClient(id, value);
         return Ok();
     }
 
-    // DELETE api/<ClientController>/5
+    /// <summary>
+    /// Удаление клиента по идентификатору
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Код выполнения</returns>
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {

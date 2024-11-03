@@ -10,7 +10,7 @@ public class RepositoryClient : IRepositoryClient
     {
         var oldValue = GetClientById(id);
 
-        if (oldValue != null) { return false; }
+        if (oldValue == null) { return false; }
         oldValue.FullName = client.FullName;
         oldValue.PassportData = client.PassportData;
         oldValue.Birthday = client.Birthday;
@@ -20,7 +20,7 @@ public class RepositoryClient : IRepositoryClient
     public bool DeleteClient(int id)
     {
         var client = GetClientById(id);
-        if (client != null) { return false; }
+        if (client == null) { return false; }
         _clients.Remove(client);
         return true;
     }

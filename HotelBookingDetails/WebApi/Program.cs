@@ -16,6 +16,11 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename)); 
 });
 builder.Services.AddSingleton<IRepositoryClient, RepositoryClient>();
+builder.Services.AddSingleton<IRepositoryHotel, RepositoryHotel>();
+builder.Services.AddSingleton<IRepositoryRoom, RepositoryRoom>();
+builder.Services.AddSingleton<IRepositoryReservedRooms, RepositoryReservedRooms>();
+builder.Services.AddSingleton<IRepositoryPassport, RepositoryPassport>();
+builder.Services.AddSingleton<IRepositoryTypeRoom, RepositoryTypeRoom>();
 builder.Services.AddAutoMapper(typeof(Mapping));
 
 var app = builder.Build();

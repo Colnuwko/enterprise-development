@@ -17,7 +17,7 @@ public class RepositoryRoom : IRepositoryRoom
     public bool DeleteRoom(int id)
     {
         var room = GetRoomById(id);
-        if (room != null) { return false; }
+        if (room == null) { return false; }
         _rooms.Remove(room);
         return true;
     }

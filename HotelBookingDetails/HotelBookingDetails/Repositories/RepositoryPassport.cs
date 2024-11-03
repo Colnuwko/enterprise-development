@@ -18,7 +18,7 @@ public class RepositoryPassport : IRepositoryPassport
     public bool DeletePassport(int id)
     {
         var passport = GetPassportById(id);
-        if (passport != null) { return false; }
+        if (passport == null) { return false; }
         _passports.Remove(passport);
         return true;
     }

@@ -18,7 +18,7 @@ public class RepositoryReservedRooms : IRepositoryReservedRooms
     public bool DeleteReservedRoom(int id)
     {
         var reservedRoom = GetReservedRoomById(id);
-        if (reservedRoom != null) { return false; }
+        if (reservedRoom == null) { return false; }
         _reservedRooms.Remove(reservedRoom);
         return true;
     }

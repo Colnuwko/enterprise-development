@@ -1,55 +1,82 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using HotelBookingDetails.Domain;
-//using HotelBookingDetails.Domain.Repositories;
-//// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using Microsoft.AspNetCore.Mvc;
+using HotelBookingDetails.Domain;
+using HotelBookingDetails.Domain.Repositories;
+using WebApi.Dto;
+using AutoMapper;
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-//namespace WebApi.Controllers;
+namespace WebApi.Controllers;
 
-//[Route("api/[controller]")]
-//[ApiController]
-//public class ClientController(IRepository repository) : ControllerBase
-//{
-    
-//    // GET: api/<ClientController>
-//    [HttpGet]
-//    public ActionResult<IEnumerable<Client>> Get()
-//    {
-//        return Ok(repository.GetClients());
-//    }
+[Route("api/[controller]")]
+[ApiController]
+public class HotelController(IRepositoryHotel repository, IMapper mapper) : ControllerBase
+{
 
-//    // GET api/<ClientController>/5
-//    [HttpGet("{id}")]
-//    [ProducesResponseType(typeof(Client), 200)]
-//    public ActionResult<Client> Get(int id)
-//    {
-//        var client = repository.GetClientById(id);
-//        if (client == null)
-//            return NotFound();
 
-//        return Ok(client);
-//    }
+    /// <summary>
+    /// Запрос возвращающий список всех отелей
+    /// </summary>
+    /// <returns>список отелей</returns>
+    [HttpGet]
+    public ActionResult<IEnumerable<Hotel>> Get()
+    {
+        return Ok(repository.GetHotels());
+    }
 
-//    // POST api/<ClientController>
-//    [HttpPost]
-//    public IActionResult Post([FromBody] Client client)
-//    {
-//        repository.PostClient(client);
-//        return Ok();
-//    }
+    /// <summary>
+    /// Запрос отеля по идентификатору
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Объект класса отель</returns>
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(Hotel), 200)]
+    public ActionResult<Hotel> Get(int id)
+    {
+        var hotel = repository.GetHotelById(id);
+        if (hotel == null) { return NotFound("Отель с заданным id не найден"); }
 
-//    // PUT api/<ClientController>/5
-//    [HttpPut("{id}")]
-//    public IActionResult Put(int id, [FromBody] Client client)
-//    {
-//        repository.PutClient(id, client);
-//        return Ok();
-//    }
+        return Ok(hotel);
+    }
 
-//    // DELETE api/<ClientController>/5
-//    [HttpDelete("{id}")]
-//    public IActionResult Delete(int id)
-//    {
-//        repository.DeleteClient(id);
-//        return Ok();
-//    }
-//}
+    /// <summary>
+    /// Запрос на добавления отеля
+    /// </summary>
+    /// <param name="hotel"></param>
+    /// <returns>Код выполнения</returns>
+    [HttpPost]
+    public IActionResult Post([FromBody] HotelDto hotel)
+    {
+        var value = mapper.Map<Hotel>(hotel);
+        
+        repository.PostHotel(value);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Запрос на изменение клиента по идентификатору
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="hotel"></param>
+    /// <returns>Код выполнения</returns>
+    [HttpPut("{id}")]
+    public IActionResult Put(int id, [FromBody] HotelDto hotel)
+    {
+
+        if (repository.GetHotelById(id) == null) { return NotFound("Отель с заданным id не найден"); }
+        var value = mapper.Map<Hotel>(hotel);
+        repository.PutHotel(id, value);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Удаление клиента по идентификатору
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Код выполнения</returns>
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        repository.DeleteHotel(id);
+        return Ok();
+    }
+}

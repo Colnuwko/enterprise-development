@@ -2,7 +2,7 @@
 
 namespace HotelBookingDetails.Domain.Repositories;
 
-public class RepositoryHotel : IReposirotyHotel
+public class RepositoryHotel : IRepositoryHotel
 {
     private readonly List<Hotel> _hotels = [];
     private int _hotelId = 1;
@@ -19,7 +19,7 @@ public class RepositoryHotel : IReposirotyHotel
     public bool DeleteHotel(int id)
     {
         var hotel = GetHotelById(id);
-        if (hotel != null) { return false; }
+        if (hotel == null) { return false; }
         _hotels.Remove(hotel);
         return true;
     }

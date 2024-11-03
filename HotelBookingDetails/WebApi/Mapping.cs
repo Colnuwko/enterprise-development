@@ -9,7 +9,7 @@ public class Mapping: Profile
 {
     public Mapping()
     {
-        CreateMap<Client, ClientDto>().ReverseMap();
+        CreateMap<Passport, ClientDto>().ReverseMap();
         CreateMap<Hotel, HotelDto>().ReverseMap();
         CreateMap<Room, RoomDto>().ReverseMap();
         CreateMap<ReservedRooms, ReservedRoomsDto>().ReverseMap();

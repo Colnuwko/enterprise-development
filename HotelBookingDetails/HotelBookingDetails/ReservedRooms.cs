@@ -13,7 +13,7 @@ public class ReservedRooms
     /// <summary>
     /// Клиент  
     /// </summary>
-    public required Client Client {  get; set; }
+    public required Passport Client {  get; set; }
 
     /// <summary>
     /// Комната

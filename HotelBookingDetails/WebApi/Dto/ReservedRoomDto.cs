@@ -1,6 +1,6 @@
 ﻿namespace WebApi.Dto;
 
-public class ReservedRoomDto
+public class ReservedRoomsDto
 {
     /// <summary>
     /// Клиент  

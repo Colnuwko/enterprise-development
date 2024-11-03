@@ -1,6 +1,6 @@
 ﻿namespace HotelBookingDetails.Domain.Repositories;
 
-internal interface IRepositoryPassport
+public interface IRepositoryPassport
 {
     public IEnumerable<Passport> GetPassports();
 
