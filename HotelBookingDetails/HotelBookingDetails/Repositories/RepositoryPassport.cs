@@ -11,7 +11,8 @@ public class RepositoryPassport : IRepositoryPassport
     {
         var oldValue = GetPassportById(id);
 
-        if (oldValue != null) { return false; }
+        oldValue.Number = passport.Number;
+        oldValue.Series = passport.Series;
         return true;
     }
 

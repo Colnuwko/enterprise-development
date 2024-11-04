@@ -48,6 +48,7 @@ public class ClientController(IRepositoryClient repository, IRepositoryPassport 
     public IActionResult Post([FromBody] ClientDto client)
     {
         var value = mapper.Map<Client>(client);
+        value.Birthday = new DateOnly(client.BirthdayYear, client.BirthdayMonth, client.BirthdayDay);
         value.PassportData =  repositoryPassport.GetPassportById(client.PassportDataId);
         if (value.PassportData == null) { return NotFound("Не найдены паспортные данные по заданому id"); }
         repository.PostClient(value);
@@ -79,6 +80,7 @@ public class ClientController(IRepositoryClient repository, IRepositoryPassport 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
+        if (repository.GetClientById(id) == null) { return NotFound("Клиент с заданным id не найден"); }
         repository.DeleteClient(id);
         return Ok();
     }

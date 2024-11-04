@@ -9,10 +9,8 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class HotelController(IRepositoryHotel repository, IMapper mapper) : ControllerBase
-{
-
-
+public class HotelController(IRepositoryHotel repository, IRepositoryReservedRooms repositoryReserved, IMapper mapper) : ControllerBase
+{   
     /// <summary>
     /// Запрос возвращающий список всех отелей
     /// </summary>
@@ -21,6 +19,16 @@ public class HotelController(IRepositoryHotel repository, IMapper mapper) : Cont
     public ActionResult<IEnumerable<Hotel>> Get()
     {
         return Ok(repository.GetHotels());
+    }
+
+    /// <summary>
+    /// Запрос возвращающий количество отелей
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("count")]
+    public ActionResult<int> GetCount()
+    {
+        return Ok(repository.GetCountHotels());
     }
 
     /// <summary>
@@ -76,7 +84,18 @@ public class HotelController(IRepositoryHotel repository, IMapper mapper) : Cont
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
+        if (repository.GetHotelById(id) == null) { return NotFound("Отель с заданным id не найден"); }
         repository.DeleteHotel(id);
         return Ok();
+    }
+
+    /// <summary>
+    /// Запрос возвращающий топ 5 отелей
+    /// </summary>
+    /// <returns>список отелей</returns>
+    [HttpGet("top_five_hotels")]
+    public ActionResult<IEnumerable<Hotel>> GetTopFiveHotels()
+    {
+        return Ok(repository.GetTopFiveHotelById(repositoryReserved.GetTopFiveHotelId()));
     }
 }

@@ -22,5 +22,5 @@ public class Client
     /// <summary>
     /// День рождения
     /// </summary>
-    public required DateOnly Birthday { get; set; }
+    public required DateOnly? Birthday { get; set; }
 }

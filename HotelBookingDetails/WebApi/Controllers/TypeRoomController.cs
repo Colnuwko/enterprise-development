@@ -77,6 +77,7 @@ public class TypeRoomController(IRepositoryTypeRoom repository, IMapper mapper) 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
+        if (repository.GetTypeRoomById(id) == null) { return NotFound("Тип комнаты с заданным id не найден"); }
         repository.DeleteTypeRoom(id);
         return Ok();
     }

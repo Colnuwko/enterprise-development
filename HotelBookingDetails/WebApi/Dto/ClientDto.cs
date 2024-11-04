@@ -3,8 +3,8 @@
 public class ClientDto
 {    
     /// <summary>
-     /// Имя
-     /// </summary>
+    /// Имя
+    /// </summary>
     public required string FullName { get; set; }
 
     /// <summary>
@@ -13,7 +13,18 @@ public class ClientDto
     public required int PassportDataId { get; set; }
 
     /// <summary>
+    /// Год рождения
+    /// </summary>
+    public required int BirthdayYear { get; set; }
+
+    /// <summary>
+    /// Месяц рождения
+    /// </summary>
+    public required int BirthdayMonth { get; set; }
+
+    /// <summary>
     /// День рождения
     /// </summary>
-    public required DateOnly Birthday { get; set; }
+    public required int BirthdayDay { get; set; }
+
 }

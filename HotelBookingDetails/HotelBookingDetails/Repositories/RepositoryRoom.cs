@@ -6,11 +6,14 @@ public class RepositoryRoom : IRepositoryRoom
     private readonly List<Room> _rooms = [];
     private int _roomId = 1;
 
-    public bool PutRoom(int id, Room client)
+    public bool PutRoom(int id, Room room)
     {
         var oldValue = GetRoomById(id);
 
-        if (oldValue != null) { return false; }
+        oldValue.HotelId = room.HotelId;
+        oldValue.Cost = room.Cost;
+        oldValue.Capacity = room.Capacity;
+        oldValue.Type = room.Type;
         return true;
     }
 
@@ -29,8 +32,10 @@ public class RepositoryRoom : IRepositoryRoom
         return true;
     }
 
-    public Room? GetRoomById(int id) => _rooms.Find(c => c.Id == id);
+    public Room? GetRoomById(int id) => _rooms.Find(r => r.Id == id);
 
     public IEnumerable<Room> GetRooms() => _rooms;
+
+    public IEnumerable<Room> GetRoomsInHotel(int id) => _rooms.Where(r => r.HotelId == id).Select(r => r);
 
 }

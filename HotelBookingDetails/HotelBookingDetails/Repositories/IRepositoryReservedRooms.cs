@@ -10,4 +10,9 @@ public interface IRepositoryReservedRooms
 
     public bool PutReservedRoom(int id, ReservedRooms reservedRooms);
     public bool DeleteReservedRoom(int id);
+
+    public IEnumerable<Client> ReturnAllClientInHotel(int hotelId, IEnumerable<Room> rooms);
+
+    public IEnumerable<int> GetTopFiveHotelId();
+
 }

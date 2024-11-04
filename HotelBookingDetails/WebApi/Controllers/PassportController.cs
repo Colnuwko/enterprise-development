@@ -75,6 +75,7 @@ public class PassportController(IRepositoryPassport repository, IMapper mapper) 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
+        if (repository.GetPassportById(id) == null) { return NotFound("Паспорт с заданным id не найден"); }
         repository.DeletePassport(id);
         return Ok();
     }

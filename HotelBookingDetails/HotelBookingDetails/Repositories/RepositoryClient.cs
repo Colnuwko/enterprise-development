@@ -9,8 +9,6 @@ public class RepositoryClient : IRepositoryClient
     public bool PutClient(int id, Client client)
     {
         var oldValue = GetClientById(id);
-
-        if (oldValue == null) { return false; }
         oldValue.FullName = client.FullName;
         oldValue.PassportData = client.PassportData;
         oldValue.Birthday = client.Birthday;

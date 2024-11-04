@@ -10,4 +10,9 @@ public interface IRepositoryHotel
 
     public bool PutHotel(int id, Hotel hotel);
     public bool DeleteHotel(int id);
+    public int GetCountHotels();
+
+    public int GetHotelIdByName(string name);
+
+    public IEnumerable<Hotel> GetTopFiveHotelById(IEnumerable<int> id);
 }

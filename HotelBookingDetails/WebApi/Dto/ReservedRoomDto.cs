@@ -15,12 +15,14 @@ public class ReservedRoomsDto
     /// <summary>
     /// Дата въезда
     /// </summary>
-    public required DateOnly DateArrival { get; set; }
+    /// <example>yyyy-mm-dd</example>
+    public required string DateArriv { get; set; }
 
     /// <summary>
     /// Дата выезда
     /// </summary>
-    public DateOnly DateDeparture { get; set; }
+    /// <example>yyyy-mm-dd</example>
+    public string DateDepart { get; set; }
 
     /// <summary>
     /// Период

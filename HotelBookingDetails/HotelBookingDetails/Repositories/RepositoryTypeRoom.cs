@@ -11,8 +11,7 @@ public class RepositoryTypeRoom : IRepositoryTypeRoom
     {
         var oldValue = GetTypeRoomById(id);
 
-        if (oldValue != null) { return false; }
-        //доделать
+        oldValue.Name = typeRoom.Name;
         return true;
     }
 

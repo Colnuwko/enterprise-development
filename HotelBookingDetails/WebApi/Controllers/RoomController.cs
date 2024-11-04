@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RoomController(IRepositoryRoom repository, IMapper mapper) : ControllerBase
+public class RoomController(IRepositoryRoom repository, IRepositoryTypeRoom repositoryType, IMapper mapper) : ControllerBase
 {
 
 
@@ -63,6 +63,7 @@ public class RoomController(IRepositoryRoom repository, IMapper mapper) : Contro
     {
 
         if (repository.GetRoomById(id) == null) { return NotFound("Комната с заданным id не найден"); }
+        if (repositoryType.GetTypeRoomById(room.TypeId) == null) { return NotFound("Комната с заданным Typeid не найден(тип комнаты неверен)"); }
         var value = mapper.Map<Room>(room);
         repository.PutRoom(id, value);
         return Ok();
@@ -76,7 +77,9 @@ public class RoomController(IRepositoryRoom repository, IMapper mapper) : Contro
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
+        if (repository.GetRoomById(id) == null) { return NotFound("Комната с заданным id не найден"); }
         repository.DeleteRoom(id);
         return Ok();
     }
+
 }

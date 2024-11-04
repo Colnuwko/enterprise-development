@@ -13,7 +13,7 @@ public class ReservedRooms
     /// <summary>
     /// Клиент  
     /// </summary>
-    public required Passport Client {  get; set; }
+    public required Client Client {  get; set; }
 
     /// <summary>
     /// Комната
@@ -23,12 +23,12 @@ public class ReservedRooms
     /// <summary>
     /// Дата въезда
     /// </summary>
-    public required DateOnly DateArrival { get; set; }
+    public required DateOnly? DateArrival { get; set; }
 
     /// <summary>
     /// Дата выезда
     /// </summary>
-    public DateOnly DateDeparture { get; set; }
+    public DateOnly? DateDeparture { get; set; }
 
     /// <summary>
     /// Период

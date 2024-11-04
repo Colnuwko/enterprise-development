@@ -6,12 +6,15 @@ public class RepositoryReservedRooms : IRepositoryReservedRooms
     private readonly List<ReservedRooms> _reservedRooms = [];
     private int _reservedRoomId = 1;
 
-    public bool PutReservedRoom(int id, ReservedRooms client)
+    public bool PutReservedRoom(int id, ReservedRooms reservedRooms)
     {
         var oldValue = GetReservedRoomById(id);
+        oldValue.DateDeparture = reservedRooms.DateDeparture;
+        oldValue.Period = reservedRooms.Period;
+        oldValue.DateArrival = reservedRooms.DateArrival;
+        oldValue.Client = reservedRooms.Client;
+        oldValue.Room = reservedRooms.Room;
 
-        if (oldValue != null) { return false; }
-        // доделать
         return true;
     }
 
@@ -33,4 +36,17 @@ public class RepositoryReservedRooms : IRepositoryReservedRooms
     public ReservedRooms? GetReservedRoomById(int id) => _reservedRooms.Find(r => r.Id == id);
 
     public IEnumerable<ReservedRooms> GetReservedRooms() => _reservedRooms;
+
+    public IEnumerable<Client> ReturnAllClientInHotel(int hotelId, IEnumerable<Room> rooms)
+    {
+        var clientInHotel = _reservedRooms
+            .OrderBy(r => r.Client.FullName)
+            .Where(r => rooms.ToList().Contains(r.Room))
+            .Select(r => r.Client)
+            .ToList();
+        return clientInHotel;
+    }
+
+    public IEnumerable<int> GetTopFiveHotelId() => _reservedRooms.GroupBy(r => r.Room.HotelId).Select(r => r.Key).Take(5);
+
 }
