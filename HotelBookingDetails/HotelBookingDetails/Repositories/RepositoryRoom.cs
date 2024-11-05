@@ -36,6 +36,6 @@ public class RepositoryRoom : IRepositoryRoom
 
     public IEnumerable<Room> GetRooms() => _rooms;
 
-    public IEnumerable<Room> GetRoomsInHotel(int id) => _rooms.Where(r => r.HotelId == id).Select(r => r);
+    public IEnumerable<Room> GetRoomsInHotel(IEnumerable<int> id) => _rooms.Where(r => id.Contains(r.HotelId)).Select(r => r);
 
 }

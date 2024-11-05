@@ -15,4 +15,9 @@ public interface IRepositoryReservedRooms
 
     public IEnumerable<int> GetTopFiveHotelId();
 
+    public IEnumerable<Room> GetFreeRoomInCity(IEnumerable<Room> rooms);
+
+    public IEnumerable<Client> GetLongLiversHotel();
+
+
 }

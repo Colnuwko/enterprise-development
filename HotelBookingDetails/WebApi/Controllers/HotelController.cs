@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class HotelController(IRepositoryHotel repository, IRepositoryReservedRooms repositoryReserved, IMapper mapper) : ControllerBase
+public class HotelController(IRepositoryHotel repository, IRepositoryReservedRooms repositoryReserved, IRepositoryRoom repositoryRoom, IMapper mapper) : ControllerBase
 {   
     /// <summary>
     /// Запрос возвращающий список всех отелей
@@ -98,4 +98,17 @@ public class HotelController(IRepositoryHotel repository, IRepositoryReservedRoo
     {
         return Ok(repository.GetTopFiveHotelById(repositoryReserved.GetTopFiveHotelId()));
     }
+
+
+    /// <summary>
+    /// Запрос возвращающий минимальную максимальную и среднюю цену комнат для каждого отеля
+    /// </summary>
+    /// <returns>структура {отель, минимальная цена комнаты, максимальная цена, средняя цена}</returns>
+    [HttpGet("cost_info_about_hotels")]
+    public ActionResult<IEnumerable<T>> GetTop()
+    {
+
+        return Ok(repository.GetMaxAvgMinForHotels(repositoryRoom.GetRooms()));
+    }
+    
 }

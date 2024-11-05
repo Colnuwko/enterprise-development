@@ -51,7 +51,7 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
         var value = mapper.Map<ReservedRooms>(reservedRoom);
         value.Client = repositoryClient.GetClientById(reservedRoom.ClientId);
         value.Room = repositoryRoom.GetRoomById(reservedRoom.RoomId);
-        value.DateDeparture = DateOnly.ParseExact(reservedRoom.DateDepart, "yyyy-mm-dd");
+        if (value.DateDeparture != null) { DateOnly.ParseExact(reservedRoom.DateDepart, "yyyy-mm-dd"); }
         value.DateArrival = DateOnly.ParseExact(reservedRoom.DateArriv, "yyyy-mm-dd");
         if (value.Client == null) { return NotFound("Клиент не найден по заданому id"); }
         if (value.Room == null) { return NotFound("Комната по заданому id не найдена"); }
@@ -72,6 +72,8 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
         var value = mapper.Map<ReservedRooms>(reservedRoom);
         value.Client = repositoryClient.GetClientById(reservedRoom.ClientId);
         value.Room = repositoryRoom.GetRoomById(reservedRoom.RoomId);
+        if (value.DateDeparture != null) { DateOnly.ParseExact(reservedRoom.DateDepart, "yyyy-mm-dd"); }
+        value.DateArrival = DateOnly.ParseExact(reservedRoom.DateArriv, "yyyy-mm-dd");
         if (value.Client == null) { return NotFound("Клиент не найден по заданому id"); }
         if (value.Room == null) { return NotFound("Комната по заданому id не найдена"); }
         repository.PutReservedRoom(id, value);
@@ -102,11 +104,37 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
     {
         var hotelId = repositoryHotel.GetHotelIdByName(name);
         if (hotelId == null) { return NotFound("Отель с таким имененм не найден"); }
-        var roomsInHotel = repositoryRoom.GetRoomsInHotel(hotelId);
+        var roomsInHotel = repositoryRoom.GetRoomsInHotel([hotelId]);
         if (roomsInHotel == null) { return NotFound("Комнаты для данного отеля не найдены"); }
 
         return Ok(repository.ReturnAllClientInHotel(hotelId, roomsInHotel));
 
+    }
+
+    /// <summary>
+    /// Возвращает все свободные комнаты в выбранном городе
+    /// </summary>
+    /// <param name="city"></param>
+    /// <returns></returns>
+    [HttpGet("get_all_free_rooms/{city}")]
+    public ActionResult<IEnumerable<Room>> GetFreeRoomInCity(string city)
+    {
+
+        var hotelsInCity = repositoryHotel.GetHotelsByCity(city); 
+        if (hotelsInCity.Count() == 0) { return NotFound("Отели в выбранном городе не найдены");  }
+        var roomsInCity = repositoryRoom.GetRoomsInHotel(hotelsInCity);
+
+        return Ok(repository.GetFreeRoomInCity(roomsInCity));
+    }
+
+    /// <summary>
+    /// Возвращает клиентов с наибольшим временем проживания
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("get_all_free_rooms")]
+    public ActionResult<IEnumerable<Client>> GetLongLiversClient()
+    {
+        return Ok(repository.GetLongLiversHotel());
     }
 
 }

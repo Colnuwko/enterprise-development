@@ -49,4 +49,31 @@ public class RepositoryReservedRooms : IRepositoryReservedRooms
 
     public IEnumerable<int> GetTopFiveHotelId() => _reservedRooms.GroupBy(r => r.Room.HotelId).Select(r => r.Key).Take(5);
 
+
+    public IEnumerable<Room> GetFreeRoomInCity(IEnumerable<Room> rooms)
+    {
+        var reservRooms = _reservedRooms.Where(r => rooms.Contains(r.Room) && r.DateDeparture == null).Select(r => r.Room);
+        var freeRooms = rooms.Where(r => !reservRooms.Contains(r)).Select(r => r);
+        return freeRooms;
+    }
+
+    public IEnumerable<Client> GetLongLiversHotel()
+    {
+        var longerPeriods = _reservedRooms
+            .GroupBy(c => c.Client)
+            .Select(c => new
+            {
+                Client = c.Key,
+                Total = c.Sum(r => r.Period)
+            }).Max(c => c.Total);
+
+        var clientWithLongerPer = _reservedRooms
+            .GroupBy(c => c.Client)
+            .Select(c => new
+            {
+                Client = c.Key,
+                Total = c.Sum(r => r.Period)
+            }).Where(c => c.Total == longerPeriods).Select(c => c.Client).ToList();
+        return clientWithLongerPer;
+    }
 }

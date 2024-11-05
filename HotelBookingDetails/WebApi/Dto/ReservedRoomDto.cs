@@ -22,7 +22,7 @@ public class ReservedRoomsDto
     /// Дата выезда
     /// </summary>
     /// <example>yyyy-mm-dd</example>
-    public string DateDepart { get; set; }
+    public string? DateDepart { get; set; }
 
     /// <summary>
     /// Период

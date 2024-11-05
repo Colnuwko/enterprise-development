@@ -14,5 +14,9 @@ public interface IRepositoryHotel
 
     public int GetHotelIdByName(string name);
 
+    public IEnumerable<int> GetHotelsByCity(string city);
+
     public IEnumerable<Hotel> GetTopFiveHotelById(IEnumerable<int> id);
+
+    public IEnumerable<T> GetMaxAvgMinForHotels(IEnumerable<Room> rooms);
 }

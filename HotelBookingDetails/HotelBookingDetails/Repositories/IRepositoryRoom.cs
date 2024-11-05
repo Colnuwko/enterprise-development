@@ -11,7 +11,7 @@ public interface IRepositoryRoom
     public bool PutRoom(int id, Room room);
     public bool DeleteRoom(int id);
 
-    public IEnumerable<Room> GetRoomsInHotel(int id);
-
+    public IEnumerable<Room> GetRoomsInHotel(IEnumerable<int> id);
+    
  
 }
