@@ -1,16 +1,15 @@
-﻿
-namespace HotelBookingDetails.Domain.Repositories;
+﻿namespace HotelBookingDetails.Domain.Repositories;
 
 public class RepositoryPassport : IRepository<Passport>
 {
-
     private readonly List<Passport> _passports = [];
     private int _passportId = 1;
 
     public bool Put(int id, Passport passport)
     {
         var oldValue = GetById(id);
-
+        if (oldValue == null)
+            return false;
         oldValue.Number = passport.Number;
         oldValue.Series = passport.Series;
         return true;
@@ -35,5 +34,4 @@ public class RepositoryPassport : IRepository<Passport>
     public Passport? GetById(int id) => _passports.Find(p => p.Id == id);
 
     public IEnumerable<Passport> GetAll() => _passports;
-
 }

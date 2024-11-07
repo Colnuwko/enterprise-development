@@ -1,5 +1,4 @@
-﻿
-namespace HotelBookingDetails.Domain.Repositories;
+﻿namespace HotelBookingDetails.Domain.Repositories;
 
 public class RepositoryRoom : IRepository<Room>
 {
@@ -9,7 +8,8 @@ public class RepositoryRoom : IRepository<Room>
     public bool Put(int id, Room room)
     {
         var oldValue = GetById(id);
-
+        if (oldValue == null)
+            return false;
         oldValue.HotelId = room.HotelId;
         oldValue.Cost = room.Cost;
         oldValue.Capacity = room.Capacity;
@@ -20,8 +20,8 @@ public class RepositoryRoom : IRepository<Room>
     public bool Delete(int id)
     {
         var room = GetById(id);
-        if (room == null) 
-            return false; 
+        if (room == null)
+            return false;
         _rooms.Remove(room);
         return true;
     }
@@ -38,5 +38,4 @@ public class RepositoryRoom : IRepository<Room>
     public IEnumerable<Room> GetAll() => _rooms;
 
     public IEnumerable<Room> GetRoomsInHotel(IEnumerable<int> id) => _rooms.Where(r => id.Contains(r.HotelId)).Select(r => r);
-
 }

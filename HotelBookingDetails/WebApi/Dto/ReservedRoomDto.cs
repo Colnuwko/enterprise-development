@@ -16,13 +16,13 @@ public class ReservedRoomsDto
     /// Дата въезда
     /// </summary>
     /// <example>yyyy-mm-dd</example>
-    public required string DateArriv { get; set; }
+    public required string DateArrival { get; set; }
 
     /// <summary>
     /// Дата выезда
     /// </summary>
     /// <example>yyyy-mm-dd</example>
-    public string? DateDepart { get; set; }
+    public string? DateDeparture { get; set; }
 
     /// <summary>
     /// Период

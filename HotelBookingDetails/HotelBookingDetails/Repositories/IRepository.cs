@@ -11,5 +11,6 @@ public interface IRepository<C>
     public bool Post(C client);
 
     public bool Put(int id, C client);
+
     public bool Delete(int id);
 }

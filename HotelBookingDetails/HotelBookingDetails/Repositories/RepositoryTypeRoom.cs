@@ -1,5 +1,4 @@
-﻿
-namespace HotelBookingDetails.Domain.Repositories;
+﻿namespace HotelBookingDetails.Domain.Repositories;
 
 public class RepositoryTypeRoom : IRepository<TypeRoom>
 {
@@ -10,7 +9,8 @@ public class RepositoryTypeRoom : IRepository<TypeRoom>
     public bool Put(int id, TypeRoom typeRoom)
     {
         var oldValue = GetById(id);
-
+        if (oldValue == null)
+            return false;
         oldValue.Name = typeRoom.Name;
         return true;
     }

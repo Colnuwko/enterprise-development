@@ -9,6 +9,7 @@ public class Room
     /// Идентификатор комнаты
     /// </summary>
     public required int Id { get; set; }
+
     /// <summary>
     /// Тип номера
     /// </summary>

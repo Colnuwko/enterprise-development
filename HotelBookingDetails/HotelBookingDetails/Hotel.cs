@@ -9,6 +9,7 @@ public class Hotel
     /// Идентификатор отеля
     /// </summary>
     public required int Id { get; set; }
+
     /// <summary>
     /// Название
     /// </summary>
@@ -23,5 +24,4 @@ public class Hotel
     /// Город
     /// </summary>
     public required string City { get; set; }
-
 }

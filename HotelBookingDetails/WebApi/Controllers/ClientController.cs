@@ -3,16 +3,13 @@ using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
 using WebApi.Dto;
 using AutoMapper;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
+using System.ComponentModel.DataAnnotations;
 namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class ClientController(IRepository<Client> repository, IRepository<Passport> repositoryPassport, IMapper mapper) : ControllerBase
 {
-    
-    
     /// <summary>
     /// Запрос возвращающий список всех клиентов
     /// </summary>
@@ -29,13 +26,11 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     /// <param name="id"></param>
     /// <returns>Объект класса клиент</returns>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(Client), 200)]
     public ActionResult<Client> Get(int id)
     {
         var client = repository.GetById(id);
         if (client == null)
             return NotFound();
-
         return Ok(client);
     }
 
@@ -45,13 +40,13 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     /// <param name="client"></param>
     /// <returns>Код выполнения</returns>
     [HttpPost]
+
     public IActionResult Post([FromBody] ClientDto client)
     {
+        if (client.PassportDataId == null)
+            return NotFound("Не найдены паспортные данные по заданному id");
         var value = mapper.Map<Client>(client);
-        value.Birthday = new DateOnly(client.BirthdayYear, client.BirthdayMonth, client.BirthdayDay);
         value.PassportData =  repositoryPassport.GetById(client.PassportDataId);
-        if (value.PassportData == null) 
-            return NotFound("Не найдены паспортные данные по заданному id"); 
         repository.Post(value);
         return Ok();
     }
@@ -65,7 +60,6 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] ClientDto client)
     {
-        
         if (repository.GetById(id) == null) 
             return NotFound("Клиент с заданным id не найден"); 
         if (repositoryPassport.GetById(client.PassportDataId) == null) 

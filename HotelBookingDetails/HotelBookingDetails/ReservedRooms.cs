@@ -3,13 +3,13 @@
 /// <summary>
 /// Забронированные номера
 /// </summary>
-
 public class ReservedRooms
 {
     /// <summary>
     /// Идентификатор зарезервированных комнат
     /// </summary>
     public required int Id { get; set; }
+
     /// <summary>
     /// Клиент  
     /// </summary>

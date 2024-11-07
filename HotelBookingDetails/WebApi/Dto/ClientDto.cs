@@ -26,5 +26,4 @@ public class ClientDto
     /// День рождения
     /// </summary>
     public required int BirthdayDay { get; set; }
-
 }

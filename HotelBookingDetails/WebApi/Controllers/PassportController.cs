@@ -3,8 +3,6 @@ using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
 using WebApi.Dto;
 using AutoMapper;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
@@ -28,13 +26,11 @@ public class PassportController(IRepository<Passport> repository, IMapper mapper
     /// <param name="id"></param>
     /// <returns>Объект класса паспорт</returns>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(Passport), 200)]
     public ActionResult<Passport> Get(int id)
     {
         var client = repository.GetById(id);
         if (client == null)
             return NotFound();
-
         return Ok(client);
     }
 
@@ -60,7 +56,6 @@ public class PassportController(IRepository<Passport> repository, IMapper mapper
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] PassportDto passport)
     {
-        
         if (repository.GetById(id) == null) 
             return NotFound("Паспорт с заданным id не найден"); 
         var value = mapper.Map<Passport>(passport);

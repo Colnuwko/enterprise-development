@@ -3,8 +3,6 @@ using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
 using WebApi.Dto;
 using AutoMapper;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
@@ -28,7 +26,7 @@ public class HotelController(IRepository<Hotel> repository, IRepository<Reserved
     [HttpGet("count")]
     public ActionResult<int> GetCount()
     {
-        return Ok(repository.GetCountHotels());
+        return Ok(GetCountHotels());
     }
 
     /// <summary>
@@ -37,13 +35,11 @@ public class HotelController(IRepository<Hotel> repository, IRepository<Reserved
     /// <param name="id"></param>
     /// <returns>Объект класса отель</returns>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(Hotel), 200)]
     public ActionResult<Hotel> Get(int id)
     {
-        var hotel = repository.GetHotelById(id);
+        var hotel = repository.GetById(id);
         if (hotel == null) 
             return NotFound("Отель с заданным id не найден"); 
-
         return Ok(hotel);
     }
 
@@ -56,7 +52,6 @@ public class HotelController(IRepository<Hotel> repository, IRepository<Reserved
     public IActionResult Post([FromBody] HotelDto hotel)
     {
         var value = mapper.Map<Hotel>(hotel);
-        
         repository.Post(value);
         return Ok();
     }
@@ -70,11 +65,10 @@ public class HotelController(IRepository<Hotel> repository, IRepository<Reserved
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] HotelDto hotel)
     {
-
-        if (repository.GetHotelById(id) == null) 
+        if (repository.GetById(id) == null) 
             return NotFound("Отель с заданным id не найден"); 
         var value = mapper.Map<Hotel>(hotel);
-        repository.PutHotel(id, value);
+        repository.Put(id, value);
         return Ok();
     }
 
@@ -93,15 +87,14 @@ public class HotelController(IRepository<Hotel> repository, IRepository<Reserved
     }
 
     /// <summary>
-    /// Запрос возвращающий топ 5 отелей
+    /// Запрос возвращающий топ 5 отелей по количеству бронирований
     /// </summary>
     /// <returns>список отелей</returns>
-    [HttpGet("top_five_hotels")]
+    [HttpGet("top_5_hotels_by_number_of_bookings")]
     public ActionResult<IEnumerable<Hotel>> GetTopFiveHotels()
     {
-        return Ok(repository.GetTopFiveHotelById(repositoryReserved.GetTopFiveHotelId()));
+        return Ok(GetTopFiveHotelById(GetTopFiveHotelId()));
     }
-
 
     /// <summary>
     /// Запрос возвращающий минимальную максимальную и среднюю цену комнат для каждого отеля
@@ -110,9 +103,33 @@ public class HotelController(IRepository<Hotel> repository, IRepository<Reserved
     [HttpGet("cost_info_about_hotels")]
     public ActionResult<IEnumerable<T>> GetTop()
     {
-
-        return Ok(repository.GetMaxAvgMinForHotels(repositoryRoom.GetAll()));
+        return Ok(GetMaxAvgMinForHotels(repositoryRoom.GetAll()));
     }
-    
 
+    [NonAction]
+    public int GetCountHotels() => repository.GetAll().Count();
+
+    [NonAction]
+    public IEnumerable<Hotel> GetTopFiveHotelById(IEnumerable<int> id)
+    {
+        return repository.GetAll().Where(h => id.Contains(h.Id));
+    }
+
+    [NonAction]
+    public IEnumerable<T> GetMaxAvgMinForHotels(IEnumerable<Room> rooms)
+    {
+
+        var hotelCosts = repository.GetAll().Select(h => new T
+        (
+            (repository.GetAll().Where(hotel => hotel.Id == h.Id).Select(hotel => hotel)),
+            rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Min(rm => rm.Cost),
+            rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Max(rm => rm.Cost),
+            rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Average(rm => rm.Cost)
+        )).AsEnumerable();
+
+        return hotelCosts;
+    }
+
+    [NonAction]
+    public IEnumerable<int> GetTopFiveHotelId() => repositoryReserved.GetAll().GroupBy(r => r.Room.HotelId).Select(r => r.Key).Take(5);
 }

@@ -3,16 +3,12 @@ using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
 using WebApi.Dto;
 using AutoMapper;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> repositoryType, IMapper mapper) : ControllerBase
 {
-
-
     /// <summary>
     /// Запрос возвращающий список всех комнат
     /// </summary>
@@ -29,13 +25,11 @@ public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> 
     /// <param name="id"></param>
     /// <returns>Объект класса комната</returns>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(Room), 200)]
     public ActionResult<Room> Get(int id)
     {
         var room = repository.GetById(id);
         if (room == null) 
             return NotFound("Комната с заданным id не найден"); 
-
         return Ok(room);
     }
 
@@ -62,7 +56,6 @@ public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> 
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] RoomDto room)
     {
-
         if (repository.GetById(id) == null) 
             return NotFound("Комната с заданным id не найден"); 
         if (repositoryType.GetById(room.TypeId) == null) 
@@ -85,5 +78,4 @@ public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> 
         repository.Delete(id);
         return Ok();
     }
-
 }

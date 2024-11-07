@@ -3,22 +3,17 @@ using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
 using WebApi.Dto;
 using AutoMapper;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper) : ControllerBase
 {
-
-
     /// <summary>
     /// Запрос возвращающий список типов комнат
     /// </summary>
     /// <returns>список типов</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(TypeRoom), 200)]
     public ActionResult<IEnumerable<TypeRoom>> Get()
     {
         return Ok(repository.GetAll());
@@ -30,13 +25,11 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     /// <param name="id"></param>
     /// <returns>Объект класса тип комнаты</returns>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(TypeRoom), 200)]
     public ActionResult<TypeRoom> Get(int id)
     {
         var typeRoom = repository.GetById(id);
         if (typeRoom == null)  
             return NotFound("Тип комнаты с заданным id не найден"); 
-
         return Ok(typeRoom);
     }
 
@@ -49,7 +42,6 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     public IActionResult Post([FromBody] TypeRoomDto typeRoom)
     {
         var value = mapper.Map<TypeRoom>(typeRoom);
-
         repository.Post(value);
         return Ok();
     }
@@ -63,7 +55,6 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] TypeRoomDto typeRoom)
     {
-
         if (repository.GetById(id) == null) 
             return NotFound("Тип комнаты с заданным id не найден"); 
         var value = mapper.Map<TypeRoom>(typeRoom);

@@ -1,9 +1,5 @@
-﻿
+﻿namespace HotelBookingDetails.Domain.Repositories;
 
-using System.Runtime.CompilerServices;
-using System.Transactions;
-
-namespace HotelBookingDetails.Domain.Repositories;
 public class T
 {
     public T(IEnumerable<Hotel> hotel, int min, int max, double avg)
@@ -26,7 +22,8 @@ public class RepositoryHotel : IRepository<Hotel>
     public bool Put(int id, Hotel hotel)
     {
         var oldValue = GetById(id);
-
+        if (oldValue == null)
+            return false;
         oldValue.Address = hotel.Address;
         oldValue.City = hotel.City;
         oldValue.Name = hotel.Name;
@@ -52,34 +49,4 @@ public class RepositoryHotel : IRepository<Hotel>
     public Hotel? GetById(int id) => _hotels.Find(h => h.Id == id);
 
     public IEnumerable<Hotel> GetAll() => _hotels;
-
-    public int GetCountHotels() => _hotels.Count;
-
-    public int GetHotelIdByName(string name)
-    {
-        return _hotels.Where(h => h.Name == name).Select(h => h.Id).First();
-    }
-
-    public IEnumerable<int> GetHotelsByCity(string city) => _hotels.Where(h => h.City == city).Select(h => h.Id);
-
-
-    public IEnumerable<Hotel> GetTopFiveHotelById(IEnumerable<int> id)
-    {
-        return _hotels.Where(h => id.Contains(h.Id));
-    }
-
-
-    public IEnumerable<T> GetMaxAvgMinForHotels(IEnumerable<Room> rooms)
-    {
-
-        var hotelCosts = _hotels.Select(h => new T
-        (
-            (_hotels.Where(hotel => hotel.Id == h.Id).Select(hotel => hotel)),
-            rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Min(rm => rm.Cost),
-            rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Max(rm => rm.Cost),
-            rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Average(rm => rm.Cost)
-        )).AsEnumerable();
-
-        return hotelCosts;
-    }
 }

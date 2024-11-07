@@ -1,13 +1,11 @@
 using HotelBookingDetails.Domain.Repositories;
+using HotelBookingDetails.Domain;
 using System.Reflection;
 using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => 
 { 
@@ -15,17 +13,19 @@ builder.Services.AddSwaggerGen(options =>
    
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename)); 
 });
-builder.Services.AddSingleton<IRepositoryClient, RepositoryClient>();
-builder.Services.AddSingleton<IRepositoryHotel, RepositoryHotel>();
-builder.Services.AddSingleton<IRepositoryRoom, RepositoryRoom>();
-builder.Services.AddSingleton<IRepositoryReservedRooms, RepositoryReservedRooms>();
-builder.Services.AddSingleton<IRepositoryPassport, RepositoryPassport>();
-builder.Services.AddSingleton<IRepositoryTypeRoom, RepositoryTypeRoom>();
+builder.Services.AddSingleton<IRepository<Client>, RepositoryClient>();
+builder.Services.AddSingleton<IRepository<Hotel>, RepositoryHotel>();
+builder.Services.AddSingleton<IRepository<Room>, RepositoryRoom>();
+builder.Services.AddSingleton<IRepository<ReservedRooms>, RepositoryReservedRooms>();
+builder.Services.AddSingleton<IRepository<Passport>, RepositoryPassport>();
+builder.Services.AddSingleton<IRepository<TypeRoom>, RepositoryTypeRoom>();
+
+
 builder.Services.AddAutoMapper(typeof(Mapping));
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -33,9 +33,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

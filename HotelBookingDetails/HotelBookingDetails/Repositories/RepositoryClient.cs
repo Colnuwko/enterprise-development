@@ -1,5 +1,4 @@
-﻿
-namespace HotelBookingDetails.Domain.Repositories;
+﻿namespace HotelBookingDetails.Domain.Repositories;
 
 public class RepositoryClient : IRepository<Client>
 {
@@ -9,6 +8,8 @@ public class RepositoryClient : IRepository<Client>
     public bool Put(int id, Client client)
     {
         var oldValue = GetById(id);
+        if (oldValue == null)
+            return false;
         oldValue.FullName = client.FullName;
         oldValue.PassportData = client.PassportData;
         oldValue.Birthday = client.Birthday;

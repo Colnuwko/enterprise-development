@@ -1,10 +1,9 @@
-﻿namespace WebApi.Dto
+﻿namespace WebApi.Dto;
+
+public class TypeRoomDto
 {
-    public class TypeRoomDto
-    {
-        /// <summary>
-        /// Название типа
-        /// </summary>
-        public required string Name { get; set; }
-    }
+    /// <summary>
+    /// Название типа
+    /// </summary>
+    public required string Name { get; set; }
 }
