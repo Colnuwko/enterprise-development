@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TypeRoomController(IRepositoryTypeRoom repository, IMapper mapper) : ControllerBase
+public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper) : ControllerBase
 {
 
 
@@ -21,7 +21,7 @@ public class TypeRoomController(IRepositoryTypeRoom repository, IMapper mapper) 
     [ProducesResponseType(typeof(TypeRoom), 200)]
     public ActionResult<IEnumerable<TypeRoom>> Get()
     {
-        return Ok(repository.GetTypeRooms());
+        return Ok(repository.GetAll());
     }
 
     /// <summary>
@@ -33,8 +33,9 @@ public class TypeRoomController(IRepositoryTypeRoom repository, IMapper mapper) 
     [ProducesResponseType(typeof(TypeRoom), 200)]
     public ActionResult<TypeRoom> Get(int id)
     {
-        var typeRoom = repository.GetTypeRoomById(id);
-        if (typeRoom == null) { return NotFound("Тип комнаты с заданным id не найден"); }
+        var typeRoom = repository.GetById(id);
+        if (typeRoom == null)  
+            return NotFound("Тип комнаты с заданным id не найден"); 
 
         return Ok(typeRoom);
     }
@@ -49,7 +50,7 @@ public class TypeRoomController(IRepositoryTypeRoom repository, IMapper mapper) 
     {
         var value = mapper.Map<TypeRoom>(typeRoom);
 
-        repository.PostTypeRoom(value);
+        repository.Post(value);
         return Ok();
     }
 
@@ -63,9 +64,10 @@ public class TypeRoomController(IRepositoryTypeRoom repository, IMapper mapper) 
     public IActionResult Put(int id, [FromBody] TypeRoomDto typeRoom)
     {
 
-        if (repository.GetTypeRoomById(id) == null) { return NotFound("Тип комнаты с заданным id не найден"); }
+        if (repository.GetById(id) == null) 
+            return NotFound("Тип комнаты с заданным id не найден"); 
         var value = mapper.Map<TypeRoom>(typeRoom);
-        repository.PutTypeRoom(id, value);
+        repository.Put(id, value);
         return Ok();
     }
 
@@ -77,8 +79,9 @@ public class TypeRoomController(IRepositoryTypeRoom repository, IMapper mapper) 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.GetTypeRoomById(id) == null) { return NotFound("Тип комнаты с заданным id не найден"); }
-        repository.DeleteTypeRoom(id);
+        if (repository.GetById(id) == null) 
+            return NotFound("Тип комнаты с заданным id не найден"); 
+        repository.Delete(id);
         return Ok();
     }
 }

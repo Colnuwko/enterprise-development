@@ -18,14 +18,14 @@ public class T
     public double Avg { get; set; }
 }
 
-public class RepositoryHotel : IRepositoryHotel
+public class RepositoryHotel : IRepository<Hotel>
 {
     private readonly List<Hotel> _hotels = [];
     private int _hotelId = 1;
 
-    public bool PutHotel(int id, Hotel hotel)
+    public bool Put(int id, Hotel hotel)
     {
-        var oldValue = GetHotelById(id);
+        var oldValue = GetById(id);
 
         oldValue.Address = hotel.Address;
         oldValue.City = hotel.City;
@@ -33,24 +33,25 @@ public class RepositoryHotel : IRepositoryHotel
         return true;
     }
 
-    public bool DeleteHotel(int id)
+    public bool Delete(int id)
     {
-        var hotel = GetHotelById(id);
-        if (hotel == null) { return false; }
+        var hotel = GetById(id);
+        if (hotel == null)
+            return false; 
         _hotels.Remove(hotel);
         return true;
     }
 
-    public bool PostHotel(Hotel hotel)
+    public bool Post(Hotel hotel)
     {
         hotel.Id = _hotelId++;
         _hotels.Add(hotel);
         return true;
     }
 
-    public Hotel? GetHotelById(int id) => _hotels.Find(h => h.Id == id);
+    public Hotel? GetById(int id) => _hotels.Find(h => h.Id == id);
 
-    public IEnumerable<Hotel> GetHotels() => _hotels;
+    public IEnumerable<Hotel> GetAll() => _hotels;
 
     public int GetCountHotels() => _hotels.Count;
 
@@ -67,12 +68,12 @@ public class RepositoryHotel : IRepositoryHotel
         return _hotels.Where(h => id.Contains(h.Id));
     }
 
-    
+
     public IEnumerable<T> GetMaxAvgMinForHotels(IEnumerable<Room> rooms)
     {
 
         var hotelCosts = _hotels.Select(h => new T
-        ( 
+        (
             (_hotels.Where(hotel => hotel.Id == h.Id).Select(hotel => hotel)),
             rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Min(rm => rm.Cost),
             rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Max(rm => rm.Cost),

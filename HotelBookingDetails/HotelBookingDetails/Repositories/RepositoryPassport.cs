@@ -1,38 +1,39 @@
 ﻿
 namespace HotelBookingDetails.Domain.Repositories;
 
-public class RepositoryPassport : IRepositoryPassport
+public class RepositoryPassport : IRepository<Passport>
 {
 
     private readonly List<Passport> _passports = [];
     private int _passportId = 1;
 
-    public bool PutPassport(int id, Passport passport)
+    public bool Put(int id, Passport passport)
     {
-        var oldValue = GetPassportById(id);
+        var oldValue = GetById(id);
 
         oldValue.Number = passport.Number;
         oldValue.Series = passport.Series;
         return true;
     }
 
-    public bool DeletePassport(int id)
+    public bool Delete(int id)
     {
-        var passport = GetPassportById(id);
-        if (passport == null) { return false; }
+        var passport = GetById(id);
+        if (passport == null) 
+            return false; 
         _passports.Remove(passport);
         return true;
     }
 
-    public bool PostPassport(Passport passport)
+    public bool Post(Passport passport)
     {
         passport.Id = _passportId++;
         _passports.Add(passport);
         return true;
     }
 
-    public Passport? GetPassportById(int id) => _passports.Find(p => p.Id == id);
+    public Passport? GetById(int id) => _passports.Find(p => p.Id == id);
 
-    public IEnumerable<Passport> GetPassports() => _passports;
+    public IEnumerable<Passport> GetAll() => _passports;
 
 }

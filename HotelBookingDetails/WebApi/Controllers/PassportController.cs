@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PassportController(IRepositoryPassport repository, IMapper mapper) : ControllerBase
+public class PassportController(IRepository<Passport> repository, IMapper mapper) : ControllerBase
 {   
     /// <summary>
     /// Запрос возвращающий список всех паспортов
@@ -19,7 +19,7 @@ public class PassportController(IRepositoryPassport repository, IMapper mapper) 
     [ProducesResponseType(typeof(Passport), 200)]
     public ActionResult<IEnumerable<Passport>> Get()
     {
-        return Ok(repository.GetPassports());
+        return Ok(repository.GetAll());
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ public class PassportController(IRepositoryPassport repository, IMapper mapper) 
     [ProducesResponseType(typeof(Passport), 200)]
     public ActionResult<Passport> Get(int id)
     {
-        var client = repository.GetPassportById(id);
+        var client = repository.GetById(id);
         if (client == null)
             return NotFound();
 
@@ -47,7 +47,7 @@ public class PassportController(IRepositoryPassport repository, IMapper mapper) 
     public IActionResult Post([FromBody] PassportDto passport)
     {
         var value = mapper.Map<Passport>(passport);
-        repository.PostPassport(value);
+        repository.Post(value);
         return Ok();
     }
 
@@ -61,9 +61,10 @@ public class PassportController(IRepositoryPassport repository, IMapper mapper) 
     public IActionResult Put(int id, [FromBody] PassportDto passport)
     {
         
-        if (repository.GetPassportById(id) == null) { return NotFound("Паспорт с заданным id не найден"); }
+        if (repository.GetById(id) == null) 
+            return NotFound("Паспорт с заданным id не найден"); 
         var value = mapper.Map<Passport>(passport);
-        repository.PutPassport(id, value);
+        repository.Put(id, value);
         return Ok();
     }
 
@@ -74,9 +75,10 @@ public class PassportController(IRepositoryPassport repository, IMapper mapper) 
     /// <returns>Код выполнения</returns>
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
-    {
-        if (repository.GetPassportById(id) == null) { return NotFound("Паспорт с заданным id не найден"); }
-        repository.DeletePassport(id);
+    { 
+        if (repository.GetById(id) == null)
+            return NotFound("Паспорт с заданным id не найден"); 
+        repository.Delete(id);
         return Ok();
     }
 }

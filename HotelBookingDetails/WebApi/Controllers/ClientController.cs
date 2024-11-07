@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ClientController(IRepositoryClient repository, IRepositoryPassport repositoryPassport, IMapper mapper) : ControllerBase
+public class ClientController(IRepository<Client> repository, IRepository<Passport> repositoryPassport, IMapper mapper) : ControllerBase
 {
     
     
@@ -20,7 +20,7 @@ public class ClientController(IRepositoryClient repository, IRepositoryPassport 
     [HttpGet]
     public ActionResult<IEnumerable<Client>> Get()
     {
-        return Ok(repository.GetClients());
+        return Ok(repository.GetAll());
     }
 
     /// <summary>
@@ -32,7 +32,7 @@ public class ClientController(IRepositoryClient repository, IRepositoryPassport 
     [ProducesResponseType(typeof(Client), 200)]
     public ActionResult<Client> Get(int id)
     {
-        var client = repository.GetClientById(id);
+        var client = repository.GetById(id);
         if (client == null)
             return NotFound();
 
@@ -49,9 +49,10 @@ public class ClientController(IRepositoryClient repository, IRepositoryPassport 
     {
         var value = mapper.Map<Client>(client);
         value.Birthday = new DateOnly(client.BirthdayYear, client.BirthdayMonth, client.BirthdayDay);
-        value.PassportData =  repositoryPassport.GetPassportById(client.PassportDataId);
-        if (value.PassportData == null) { return NotFound("Не найдены паспортные данные по заданому id"); }
-        repository.PostClient(value);
+        value.PassportData =  repositoryPassport.GetById(client.PassportDataId);
+        if (value.PassportData == null) 
+            return NotFound("Не найдены паспортные данные по заданному id"); 
+        repository.Post(value);
         return Ok();
     }
 
@@ -65,10 +66,12 @@ public class ClientController(IRepositoryClient repository, IRepositoryPassport 
     public IActionResult Put(int id, [FromBody] ClientDto client)
     {
         
-        if (repository.GetClientById(id) == null) { return NotFound("Клиент с заданным id не найден"); }
-        if (repositoryPassport.GetPassportById(client.PassportDataId) == null) { return NotFound("Не найдены паспортные данные по заданому id"); }
+        if (repository.GetById(id) == null) 
+            return NotFound("Клиент с заданным id не найден"); 
+        if (repositoryPassport.GetById(client.PassportDataId) == null) 
+            return NotFound("Не найдены паспортные данные по заданному id"); 
         var value = mapper.Map<Client>(client);
-        repository.PutClient(id, value);
+        repository.Put(id, value);
         return Ok();
     }
 
@@ -80,8 +83,9 @@ public class ClientController(IRepositoryClient repository, IRepositoryPassport 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.GetClientById(id) == null) { return NotFound("Клиент с заданным id не найден"); }
-        repository.DeleteClient(id);
+        if (repository.GetById(id) == null) 
+            return NotFound("Клиент с заданным id не найден"); 
+        repository.Delete(id);
         return Ok();
     }
 }

@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class HotelController(IRepositoryHotel repository, IRepositoryReservedRooms repositoryReserved, IRepositoryRoom repositoryRoom, IMapper mapper) : ControllerBase
+public class HotelController(IRepository<Hotel> repository, IRepository<ReservedRooms> repositoryReserved, IRepository<Room> repositoryRoom, IMapper mapper) : ControllerBase
 {   
     /// <summary>
     /// Запрос возвращающий список всех отелей
@@ -18,7 +18,7 @@ public class HotelController(IRepositoryHotel repository, IRepositoryReservedRoo
     [HttpGet]
     public ActionResult<IEnumerable<Hotel>> Get()
     {
-        return Ok(repository.GetHotels());
+        return Ok(repository.GetAll());
     }
 
     /// <summary>
@@ -41,7 +41,8 @@ public class HotelController(IRepositoryHotel repository, IRepositoryReservedRoo
     public ActionResult<Hotel> Get(int id)
     {
         var hotel = repository.GetHotelById(id);
-        if (hotel == null) { return NotFound("Отель с заданным id не найден"); }
+        if (hotel == null) 
+            return NotFound("Отель с заданным id не найден"); 
 
         return Ok(hotel);
     }
@@ -56,7 +57,7 @@ public class HotelController(IRepositoryHotel repository, IRepositoryReservedRoo
     {
         var value = mapper.Map<Hotel>(hotel);
         
-        repository.PostHotel(value);
+        repository.Post(value);
         return Ok();
     }
 
@@ -70,7 +71,8 @@ public class HotelController(IRepositoryHotel repository, IRepositoryReservedRoo
     public IActionResult Put(int id, [FromBody] HotelDto hotel)
     {
 
-        if (repository.GetHotelById(id) == null) { return NotFound("Отель с заданным id не найден"); }
+        if (repository.GetHotelById(id) == null) 
+            return NotFound("Отель с заданным id не найден"); 
         var value = mapper.Map<Hotel>(hotel);
         repository.PutHotel(id, value);
         return Ok();
@@ -84,8 +86,9 @@ public class HotelController(IRepositoryHotel repository, IRepositoryReservedRoo
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.GetHotelById(id) == null) { return NotFound("Отель с заданным id не найден"); }
-        repository.DeleteHotel(id);
+        if (repository.GetById(id) == null) 
+            return NotFound("Отель с заданным id не найден"); 
+        repository.Delete(id);
         return Ok();
     }
 
@@ -108,7 +111,8 @@ public class HotelController(IRepositoryHotel repository, IRepositoryReservedRoo
     public ActionResult<IEnumerable<T>> GetTop()
     {
 
-        return Ok(repository.GetMaxAvgMinForHotels(repositoryRoom.GetRooms()));
+        return Ok(repository.GetMaxAvgMinForHotels(repositoryRoom.GetAll()));
     }
     
+
 }

@@ -9,8 +9,8 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ReservedRoomController(IRepositoryReservedRooms repository, IRepositoryRoom repositoryRoom, IRepositoryClient repositoryClient,
-    IRepositoryHotel repositoryHotel, IMapper mapper) : ControllerBase
+public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepository<Room> repositoryRoom, IRepository<Client> repositoryClient,
+    IRepository<Hotel> repositoryHotel, IMapper mapper) : ControllerBase
 {
 
 
@@ -21,7 +21,7 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
     [HttpGet]
     public ActionResult<IEnumerable<ReservedRooms>> Get()
     {
-        return Ok(repository.GetReservedRooms());
+        return Ok(repository.GetAll());
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
     [ProducesResponseType(typeof(ReservedRooms), 200)]
     public ActionResult<ReservedRooms> Get(int id)
     {
-        var reservedRoom = repository.GetReservedRoomById(id);
+        var reservedRoom = repository.GetById(id);
         if (reservedRoom == null)
             return NotFound();
 
@@ -49,13 +49,15 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
     public IActionResult Post([FromBody] ReservedRoomsDto reservedRoom)
     {
         var value = mapper.Map<ReservedRooms>(reservedRoom);
-        value.Client = repositoryClient.GetClientById(reservedRoom.ClientId);
-        value.Room = repositoryRoom.GetRoomById(reservedRoom.RoomId);
+        value.Client = repositoryClient.GetById(reservedRoom.ClientId);
+        value.Room = repositoryRoom.GetById(reservedRoom.RoomId);
         if (value.DateDeparture != null) { DateOnly.ParseExact(reservedRoom.DateDepart, "yyyy-mm-dd"); }
         value.DateArrival = DateOnly.ParseExact(reservedRoom.DateArriv, "yyyy-mm-dd");
-        if (value.Client == null) { return NotFound("Клиент не найден по заданому id"); }
-        if (value.Room == null) { return NotFound("Комната по заданому id не найдена"); }
-        repository.PostReservedRoom(value);
+        if (value.Client == null) 
+            return NotFound("Клиент не найден по заданному id"); 
+        if (value.Room == null) 
+            return NotFound("Комната по заданному id не найдена"); 
+        repository.Post(value);
         return Ok();
     }
 
@@ -68,15 +70,19 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] ReservedRoomsDto reservedRoom)
     {
-        if(repository.GetReservedRoomById(id) == null) { return NotFound("Номер бронирования по данному id не найден"); }
+        if(repository.GetById(id) == null) 
+            return NotFound("Номер бронирования по данному id не найден"); 
         var value = mapper.Map<ReservedRooms>(reservedRoom);
-        value.Client = repositoryClient.GetClientById(reservedRoom.ClientId);
-        value.Room = repositoryRoom.GetRoomById(reservedRoom.RoomId);
-        if (value.DateDeparture != null) { DateOnly.ParseExact(reservedRoom.DateDepart, "yyyy-mm-dd"); }
+        value.Client = repositoryClient.GetById(reservedRoom.ClientId);
+        value.Room = repositoryRoom.GetById(reservedRoom.RoomId);
+        if (value.DateDeparture != null) 
+            DateOnly.ParseExact(reservedRoom.DateDepart, "yyyy-mm-dd"); 
         value.DateArrival = DateOnly.ParseExact(reservedRoom.DateArriv, "yyyy-mm-dd");
-        if (value.Client == null) { return NotFound("Клиент не найден по заданому id"); }
-        if (value.Room == null) { return NotFound("Комната по заданому id не найдена"); }
-        repository.PutReservedRoom(id, value);
+        if (value.Client == null) 
+            return NotFound("Клиент не найден по заданному id"); 
+        if (value.Room == null) 
+            return NotFound("Комната по заданному id не найдена"); 
+        repository.Put(id, value);
         return Ok();
     }
 
@@ -88,8 +94,9 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.GetReservedRoomById(id) == null) { return NotFound("Номер бронирования по данному id не найден"); }
-        repository.DeleteReservedRoom(id);
+        if (repository.GetById(id) == null) 
+            return NotFound("Номер бронирования по данному id не найден"); 
+        repository.Delete(id);
         return Ok();
     }
 
@@ -103,9 +110,11 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
     public ActionResult<IEnumerable<Client>> GetAllClientInHotel(string name)
     {
         var hotelId = repositoryHotel.GetHotelIdByName(name);
-        if (hotelId == null) { return NotFound("Отель с таким имененм не найден"); }
+        if (hotelId == null) 
+            return NotFound("Отель с таким имененм не найден"); 
         var roomsInHotel = repositoryRoom.GetRoomsInHotel([hotelId]);
-        if (roomsInHotel == null) { return NotFound("Комнаты для данного отеля не найдены"); }
+        if (roomsInHotel == null) 
+            return NotFound("Комнаты для данного отеля не найдены"); 
 
         return Ok(repository.ReturnAllClientInHotel(hotelId, roomsInHotel));
 
@@ -121,7 +130,8 @@ public class ReservedRoomController(IRepositoryReservedRooms repository, IReposi
     {
 
         var hotelsInCity = repositoryHotel.GetHotelsByCity(city); 
-        if (hotelsInCity.Count() == 0) { return NotFound("Отели в выбранном городе не найдены");  }
+        if (hotelsInCity.Count() == 0) 
+            return NotFound("Отели в выбранном городе не найдены");  
         var roomsInCity = repositoryRoom.GetRoomsInHotel(hotelsInCity);
 
         return Ok(repository.GetFreeRoomInCity(roomsInCity));

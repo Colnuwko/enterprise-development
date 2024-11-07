@@ -9,7 +9,7 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RoomController(IRepositoryRoom repository, IRepositoryTypeRoom repositoryType, IMapper mapper) : ControllerBase
+public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> repositoryType, IMapper mapper) : ControllerBase
 {
 
 
@@ -20,7 +20,7 @@ public class RoomController(IRepositoryRoom repository, IRepositoryTypeRoom repo
     [HttpGet]
     public ActionResult<IEnumerable<Room>> Get()
     {
-        return Ok(repository.GetRooms());
+        return Ok(repository.GetAll());
     }
 
     /// <summary>
@@ -32,8 +32,9 @@ public class RoomController(IRepositoryRoom repository, IRepositoryTypeRoom repo
     [ProducesResponseType(typeof(Room), 200)]
     public ActionResult<Room> Get(int id)
     {
-        var room = repository.GetRoomById(id);
-        if (room == null) { return NotFound("Комната с заданным id не найден"); }
+        var room = repository.GetById(id);
+        if (room == null) 
+            return NotFound("Комната с заданным id не найден"); 
 
         return Ok(room);
     }
@@ -48,7 +49,7 @@ public class RoomController(IRepositoryRoom repository, IRepositoryTypeRoom repo
     {
         var value = mapper.Map<Room>(room);
         
-        repository.PostRoom(value);
+        repository.Post(value);
         return Ok();
     }
 
@@ -62,10 +63,12 @@ public class RoomController(IRepositoryRoom repository, IRepositoryTypeRoom repo
     public IActionResult Put(int id, [FromBody] RoomDto room)
     {
 
-        if (repository.GetRoomById(id) == null) { return NotFound("Комната с заданным id не найден"); }
-        if (repositoryType.GetTypeRoomById(room.TypeId) == null) { return NotFound("Комната с заданным Typeid не найден(тип комнаты неверен)"); }
+        if (repository.GetById(id) == null) 
+            return NotFound("Комната с заданным id не найден"); 
+        if (repositoryType.GetById(room.TypeId) == null) 
+            return NotFound("Комната с заданным Typeid не найден(тип комнаты неверен)"); 
         var value = mapper.Map<Room>(room);
-        repository.PutRoom(id, value);
+        repository.Put(id, value);
         return Ok();
     }
 
@@ -77,8 +80,9 @@ public class RoomController(IRepositoryRoom repository, IRepositoryTypeRoom repo
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.GetRoomById(id) == null) { return NotFound("Комната с заданным id не найден"); }
-        repository.DeleteRoom(id);
+        if (repository.GetById(id) == null) 
+            return NotFound("Комната с заданным id не найден"); 
+        repository.Delete(id);
         return Ok();
     }
 
