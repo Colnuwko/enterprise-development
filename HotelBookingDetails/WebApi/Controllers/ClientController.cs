@@ -40,7 +40,6 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     /// <param name="client"></param>
     /// <returns>Код выполнения</returns>
     [HttpPost]
-
     public IActionResult Post([FromBody] ClientDto client)
     {
         if (client.PassportDataId == null)
