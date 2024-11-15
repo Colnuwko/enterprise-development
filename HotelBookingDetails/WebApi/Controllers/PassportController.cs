@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
-using WebApi.Dto;
 using AutoMapper;
-namespace WebApi.Controllers;
+using HotelBookingDetails.WebApi.Dto;
+namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class PassportController(IRepository<Passport> repository, IMapper mapper) : ControllerBase
-{   
+{
     /// <summary>
     /// Запрос возвращающий список всех паспортов
     /// </summary>
@@ -56,11 +56,10 @@ public class PassportController(IRepository<Passport> repository, IMapper mapper
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] PassportDto passport)
     {
-        if (repository.GetById(id) == null) 
-            return NotFound("Паспорт с заданным id не найден"); 
         var value = mapper.Map<Passport>(passport);
-        repository.Put(id, value);
-        return Ok();
+        if (repository.Put(id, value))
+            return Ok();
+        return NotFound("Объект по заданному id не найден");
     }
 
     /// <summary>
@@ -70,10 +69,9 @@ public class PassportController(IRepository<Passport> repository, IMapper mapper
     /// <returns>Код выполнения</returns>
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
-    { 
-        if (repository.GetById(id) == null)
-            return NotFound("Паспорт с заданным id не найден"); 
-        repository.Delete(id);
-        return Ok();
+    {
+        if (repository.Delete(id))
+            return Ok();
+        return NotFound("Объект по заданному id не найден");
     }
 }

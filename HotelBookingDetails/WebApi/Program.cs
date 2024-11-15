@@ -1,7 +1,7 @@
 using HotelBookingDetails.Domain.Repositories;
 using HotelBookingDetails.Domain;
 using System.Reflection;
-using WebApi;
+using HotelBookingDetails.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 

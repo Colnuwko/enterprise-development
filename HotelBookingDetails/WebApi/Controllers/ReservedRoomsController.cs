@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
-using WebApi.Dto;
 using AutoMapper;
-namespace WebApi.Controllers;
+using HotelBookingDetails.WebApi.Dto;
+namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -43,14 +43,16 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
     public IActionResult Post([FromBody] ReservedRoomsDto reservedRoom)
     {
         var value = mapper.Map<ReservedRooms>(reservedRoom);
-        value.Client = repositoryClient.GetById(reservedRoom.ClientId);
-        value.Room = repositoryRoom.GetById(reservedRoom.RoomId);
-        if (value.DateDeparture != null) { DateOnly.ParseExact(reservedRoom.DateDeparture, "yyyy-mm-dd"); }
+        var client = repositoryClient.GetById(reservedRoom.ClientId);
+        var room = repositoryRoom.GetById(reservedRoom.RoomId);
+        if (value.DateDeparture != null) { DateOnly.ParseExact(reservedRoom.DateDeparture!, "yyyy-mm-dd"); }
         value.DateArrival = DateOnly.ParseExact(reservedRoom.DateArrival, "yyyy-mm-dd");
-        if (value.Client == null) 
-            return NotFound("Клиент не найден по заданному id"); 
-        if (value.Room == null) 
-            return NotFound("Комната по заданному id не найдена"); 
+        if (client == null)
+            return NotFound("Клиент не найден по заданному id");
+        value.Client = client;
+        if (room == null)
+            return NotFound("Комната по заданному id не найдена");
+        value.Room = room;
         repository.Post(value);
         return Ok();
     }
@@ -64,20 +66,21 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] ReservedRoomsDto reservedRoom)
     {
-        if(repository.GetById(id) == null) 
-            return NotFound("Номер бронирования по данному id не найден"); 
         var value = mapper.Map<ReservedRooms>(reservedRoom);
-        value.Client = repositoryClient.GetById(reservedRoom.ClientId);
-        value.Room = repositoryRoom.GetById(reservedRoom.RoomId);
-        if (value.DateDeparture != null) 
-            DateOnly.ParseExact(reservedRoom.DateDeparture, "yyyy-mm-dd"); 
+        var client = repositoryClient.GetById(reservedRoom.ClientId);
+        var room = repositoryRoom.GetById(reservedRoom.RoomId);
+        if (value.DateDeparture != null)
+            DateOnly.ParseExact(reservedRoom.DateDeparture!, "yyyy-mm-dd");
         value.DateArrival = DateOnly.ParseExact(reservedRoom.DateArrival, "yyyy-mm-dd");
-        if (value.Client == null) 
-            return NotFound("Клиент не найден по заданному id"); 
-        if (value.Room == null) 
-            return NotFound("Комната по заданному id не найдена"); 
-        repository.Put(id, value);
-        return Ok();
+        if (client == null)
+            return NotFound("Клиент не найден по заданному id");
+        value.Client = client;
+        if (room == null)
+            return NotFound("Комната по заданному id не найдена");
+        value.Room = room;
+        if (repository.Put(id, value))
+            return Ok();
+        return NotFound("Объект по заданному id не найден");
     }
 
     /// <summary>
@@ -88,10 +91,9 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.GetById(id) == null) 
-            return NotFound("Номер бронирования по данному id не найден"); 
-        repository.Delete(id);
-        return Ok();
+        if (repository.Delete(id))
+            return Ok();
+        return NotFound("Объект по заданному id не найден");
     }
 
     /// <summary>
@@ -102,14 +104,23 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
     [HttpGet("get_all_client_in_hotel/{name}")]
     public ActionResult<IEnumerable<Client>> GetAllClientInHotel(string name)
     {
-        var hotelId = GetHotelIdByName(name);
-        if (hotelId == null) 
-            return NotFound("Отель с таким имененм не найден"); 
-        var roomsInHotel = GetRoomsInHotel([hotelId]);
-        if (roomsInHotel == null) 
-            return NotFound("Комнаты для данного отеля не найдены"); 
-
-        return Ok(ReturnAllClientInHotel(hotelId, roomsInHotel));
+        try
+        {
+            var hotelId = repositoryHotel.GetAll().Where(h => h.Name == name).Select(h => h.Id).First();
+            var roomsInHotel = repositoryRoom.GetAll().Where(r => hotelId == r.HotelId).Select(r => r);
+            if (roomsInHotel == null)
+                return NotFound("Комнаты для данного отеля не найдены");
+            var clientInHotel = repository.GetAll()
+                .OrderBy(r => r.Client.FullName)
+                .Where(r => roomsInHotel.ToList().Contains(r.Room))
+                .Select(r => r.Client)
+                .ToList();
+            return Ok(clientInHotel);
+        }
+        catch (Exception ex)
+        {
+            return NotFound("Отель с таким имененм не найден, Ошибка: \n" + ex);
+        }
     }
 
     /// <summary>
@@ -120,11 +131,13 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
     [HttpGet("get_all_free_rooms/{city}")]
     public ActionResult<IEnumerable<Room>> GetFreeRoomInCity(string city)
     {
-        var hotelsInCity = GetHotelsByCity(city); 
-        if (hotelsInCity.Count() == 0) 
-            return NotFound("Отели в выбранном городе не найдены");  
-        var roomsInCity = GetRoomsInHotel(hotelsInCity);
-        return Ok(GetFreeRoomInCity(roomsInCity));
+        var hotelsInCity = repositoryHotel.GetAll().Where(h => h.City == city).Select(h => h.Id);
+        if (hotelsInCity.Any())
+            return NotFound("Отели в выбранном городе не найдены");
+        var roomsInCity = repositoryRoom.GetAll().Where(r => hotelsInCity.Contains(r.HotelId)).Select(r => r);
+        var reservRooms = repository.GetAll().Where(r => roomsInCity.Contains(r.Room) && r.DateDeparture == null).Select(r => r.Room);
+        var freeRooms = roomsInCity.Where(r => !reservRooms.Contains(r)).Select(r => r);
+        return Ok(freeRooms);
     }
 
     /// <summary>
@@ -132,32 +145,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
     /// </summary>
     /// <returns>Список клиентов</returns>
     [HttpGet("get_clients_with_the_longest_hotel_stays")]
-    public ActionResult<IEnumerable<M>> GetLongLiversClient()
-    {
-        return Ok(GetLongLiversHotel());
-    }
-
-    [NonAction]
-    public IEnumerable<Client> ReturnAllClientInHotel(int hotelId, IEnumerable<Room> rooms)
-    {
-        var clientInHotel = repository.GetAll()
-            .OrderBy(r => r.Client.FullName)
-            .Where(r => rooms.ToList().Contains(r.Room))
-            .Select(r => r.Client)
-            .ToList();
-        return clientInHotel;
-    }
-
-    [NonAction]
-    public IEnumerable<Room> GetFreeRoomInCity(IEnumerable<Room> rooms)
-    {
-        var reservRooms = repository.GetAll().Where(r => rooms.Contains(r.Room) && r.DateDeparture == null).Select(r => r.Room);
-        var freeRooms = rooms.Where(r => !reservRooms.Contains(r)).Select(r => r);
-        return freeRooms;
-    }
-
-    [NonAction]
-    public IEnumerable<M> GetLongLiversHotel()
+    public ActionResult<IEnumerable<ReturnTypeReservedRooms>> GetLongLiversClient()
     {
         var longerPeriods = repository.GetAll()
             .GroupBy(c => c.Client)
@@ -173,19 +161,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
             {
                 Client = c.Key,
                 Total = c.Sum(r => r.Period)
-            }).Where(c => c.Total == longerPeriods).Select(c => new M (c.Client, c.Total)).ToList();
-        return clientWithLongerPer;
+            }).Where(c => c.Total == longerPeriods).Select(c => new ReturnTypeReservedRooms(c.Client, c.Total)).ToList();
+        return Ok(clientWithLongerPer);
     }
-
-    [NonAction]
-    public int GetHotelIdByName(string name)
-    {
-        return repositoryHotel.GetAll().Where(h => h.Name == name).Select(h => h.Id).First();
-    }
-
-    [NonAction]
-    public IEnumerable<int> GetHotelsByCity(string city) => repositoryHotel.GetAll().Where(h => h.City == city).Select(h => h.Id);
-
-    [NonAction]
-    public IEnumerable<Room> GetRoomsInHotel(IEnumerable<int> id) => repositoryRoom.GetAll().Where(r => id.Contains(r.HotelId)).Select(r => r);
 }

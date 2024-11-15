@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Dto;
+namespace HotelBookingDetails.WebApi.Dto;
 
 public class ClientDto
-{    
+{
     /// <summary>
     /// Имя
     /// </summary>

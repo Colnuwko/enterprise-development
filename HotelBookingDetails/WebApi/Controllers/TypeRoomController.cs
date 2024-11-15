@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
-using WebApi.Dto;
 using AutoMapper;
-namespace WebApi.Controllers;
+using HotelBookingDetails.WebApi.Dto;
+namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -28,8 +28,8 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     public ActionResult<TypeRoom> Get(int id)
     {
         var typeRoom = repository.GetById(id);
-        if (typeRoom == null)  
-            return NotFound("Тип комнаты с заданным id не найден"); 
+        if (typeRoom == null)
+            return NotFound("Тип комнаты с заданным id не найден");
         return Ok(typeRoom);
     }
 
@@ -55,11 +55,10 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] TypeRoomDto typeRoom)
     {
-        if (repository.GetById(id) == null) 
-            return NotFound("Тип комнаты с заданным id не найден"); 
         var value = mapper.Map<TypeRoom>(typeRoom);
-        repository.Put(id, value);
-        return Ok();
+        if (repository.Put(id, value))
+            return Ok();
+        return NotFound("Объект по заданному id не найден");
     }
 
     /// <summary>
@@ -70,9 +69,8 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.GetById(id) == null) 
-            return NotFound("Тип комнаты с заданным id не найден"); 
-        repository.Delete(id);
-        return Ok();
+        if (repository.Delete(id))
+            return Ok();
+        return NotFound("Объект по заданному id не найден");
     }
 }

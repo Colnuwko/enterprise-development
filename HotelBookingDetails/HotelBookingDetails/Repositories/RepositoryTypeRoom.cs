@@ -2,7 +2,6 @@
 
 public class RepositoryTypeRoom : IRepository<TypeRoom>
 {
-
     private readonly List<TypeRoom> _typeRoom = [];
     private int _typeRoomId = 1;
 
@@ -24,11 +23,10 @@ public class RepositoryTypeRoom : IRepository<TypeRoom>
         return true;
     }
 
-    public bool Post(TypeRoom typeRoom)
+    public void Post(TypeRoom typeRoom)
     {
         typeRoom.Id = _typeRoomId++;
         _typeRoom.Add(typeRoom);
-        return true;
     }
 
     public TypeRoom? GetById(int id) => _typeRoom.Find(t => t.Id == id);

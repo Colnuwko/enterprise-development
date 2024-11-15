@@ -26,16 +26,13 @@ public class RepositoryRoom : IRepository<Room>
         return true;
     }
 
-    public bool Post(Room room)
+    public void Post(Room room)
     {
         room.Id = _roomId++;
         _rooms.Add(room);
-        return true;
     }
 
     public Room? GetById(int id) => _rooms.Find(r => r.Id == id);
 
     public IEnumerable<Room> GetAll() => _rooms;
-
-    public IEnumerable<Room> GetRoomsInHotel(IEnumerable<int> id) => _rooms.Where(r => id.Contains(r.HotelId)).Select(r => r);
 }

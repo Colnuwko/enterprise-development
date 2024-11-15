@@ -25,11 +25,10 @@ public class RepositoryClient : IRepository<Client>
         return true;
     }
 
-    public bool Post(Client client)
+    public void Post(Client client)
     {
         client.Id = _clientId++;
         _clients.Add(client);
-        return true;
     }
 
     public Client? GetById(int id) => _clients.Find(c => c.Id == id);

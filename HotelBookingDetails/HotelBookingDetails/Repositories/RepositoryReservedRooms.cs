@@ -1,16 +1,5 @@
 ﻿namespace HotelBookingDetails.Domain.Repositories;
 
-public class M
-{
-    public M(Client client, int total )
-    {
-        Total = total;
-        Client = client;
-    }
-    public Client Client { get; set; }
-    public int Total { get; set; }
-}
-
 public class RepositoryReservedRooms : IRepository<ReservedRooms>
 {
     private readonly List<ReservedRooms> _reservedRooms = [];
@@ -38,11 +27,10 @@ public class RepositoryReservedRooms : IRepository<ReservedRooms>
         return true;
     }
 
-    public bool Post(ReservedRooms reservedRooms)
+    public void Post(ReservedRooms reservedRooms)
     {
         reservedRooms.Id = _reservedRoomId++;
         _reservedRooms.Add(reservedRooms);
-        return true;
     }
 
     public ReservedRooms? GetById(int id) => _reservedRooms.Find(r => r.Id == id);

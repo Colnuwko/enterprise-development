@@ -1,19 +1,5 @@
 ﻿namespace HotelBookingDetails.Domain.Repositories;
 
-public class T
-{
-    public T(IEnumerable<Hotel> hotel, int min, int max, double avg)
-    {
-        Min = min; Max = max;
-        Avg = avg;
-        Hotel = hotel;
-    }
-    public IEnumerable<Hotel> Hotel { get; set; }
-    public int Min { get; set; }
-    public int Max { get; set; }
-    public double Avg { get; set; }
-}
-
 public class RepositoryHotel : IRepository<Hotel>
 {
     private readonly List<Hotel> _hotels = [];
@@ -39,11 +25,10 @@ public class RepositoryHotel : IRepository<Hotel>
         return true;
     }
 
-    public bool Post(Hotel hotel)
+    public void Post(Hotel hotel)
     {
         hotel.Id = _hotelId++;
         _hotels.Add(hotel);
-        return true;
     }
 
     public Hotel? GetById(int id) => _hotels.Find(h => h.Id == id);

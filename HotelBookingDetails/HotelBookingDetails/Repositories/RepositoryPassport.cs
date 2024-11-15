@@ -24,11 +24,10 @@ public class RepositoryPassport : IRepository<Passport>
         return true;
     }
 
-    public bool Post(Passport passport)
+    public void Post(Passport passport)
     {
         passport.Id = _passportId++;
         _passports.Add(passport);
-        return true;
     }
 
     public Passport? GetById(int id) => _passports.Find(p => p.Id == id);

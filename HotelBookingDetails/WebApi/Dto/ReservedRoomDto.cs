@@ -1,4 +1,6 @@
-﻿namespace WebApi.Dto;
+﻿using HotelBookingDetails.Domain;
+
+namespace HotelBookingDetails.WebApi.Dto;
 
 public class ReservedRoomsDto
 {
@@ -9,7 +11,7 @@ public class ReservedRoomsDto
 
     /// <summary>
     /// Комната
-    /// </summary
+    /// </summary>
     public required int RoomId { get; set; }
 
     /// <summary>
@@ -28,4 +30,25 @@ public class ReservedRoomsDto
     /// Период
     /// </summary>
     public required int Period { get; set; }
+}
+
+
+/// <summary>
+/// Это кастомный класс для возвращаемого значения аналитического запроса
+/// </summary>
+/// <remarks>
+/// Структура {суммарное время проживания, Клиент}
+/// </remarks>
+public class ReturnTypeReservedRooms(Client client, int total)
+{
+
+    /// <summary>
+    /// Клиент
+    /// </summary>
+    public Client Client { get; set; } = client;
+
+    /// <summary>
+    /// суммарное время проживания
+    /// </summary>
+    public int Total { get; set; } = total;
 }

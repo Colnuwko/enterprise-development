@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-namespace HotelBookingDetails.Domain.Repositories;
-public interface IRepository<C>
+﻿namespace HotelBookingDetails.Domain.Repositories;
+
+public interface IRepository<T>
 {
-    public IEnumerable<C> GetAll();
+    public IEnumerable<T> GetAll();
 
-    public C? GetById(int id);
+    public T? GetById(int id);
 
-    public bool Post(C client);
+    public void Post(T client);
 
-    public bool Put(int id, C client);
+    public bool Put(int id, T client);
 
     public bool Delete(int id);
 }

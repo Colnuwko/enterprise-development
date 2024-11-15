@@ -17,7 +17,7 @@ public class ReservedRooms
 
     /// <summary>
     /// Комната
-    /// </summary
+    /// </summary>
     public required Room Room { get; set; }
 
     /// <summary>

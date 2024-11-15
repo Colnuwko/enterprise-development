@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
-using WebApi.Dto;
 using AutoMapper;
-using System.ComponentModel.DataAnnotations;
-namespace WebApi.Controllers;
+using HotelBookingDetails.WebApi.Dto;
+namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -42,10 +41,10 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     [HttpPost]
     public IActionResult Post([FromBody] ClientDto client)
     {
-        if (client.PassportDataId == null)
+        if (repositoryPassport.GetById(client.PassportDataId) == null)
             return NotFound("Не найдены паспортные данные по заданному id");
         var value = mapper.Map<Client>(client);
-        value.PassportData =  repositoryPassport.GetById(client.PassportDataId);
+        value.PassportData = repositoryPassport.GetById(client.PassportDataId)!;
         repository.Post(value);
         return Ok();
     }
@@ -59,13 +58,12 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] ClientDto client)
     {
-        if (repository.GetById(id) == null) 
-            return NotFound("Клиент с заданным id не найден"); 
-        if (repositoryPassport.GetById(client.PassportDataId) == null) 
-            return NotFound("Не найдены паспортные данные по заданному id"); 
+        if (repositoryPassport.GetById(client.PassportDataId) == null)
+            return NotFound("Не найдены паспортные данные по заданному id");
         var value = mapper.Map<Client>(client);
-        repository.Put(id, value);
-        return Ok();
+        if (repository.Put(id, value))
+            return Ok();
+        return NotFound("Объект по заданному id не найден");
     }
 
     /// <summary>
@@ -76,9 +74,8 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.GetById(id) == null) 
-            return NotFound("Клиент с заданным id не найден"); 
-        repository.Delete(id);
-        return Ok();
+        if (repository.Delete(id))
+            return Ok();
+        return NotFound("Объект по заданному id не найден");
     }
 }

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using HotelBookingDetails.Domain;
-using WebApi.Dto;
-namespace WebApi;
+using HotelBookingDetails.WebApi.Dto;
+namespace HotelBookingDetails.WebApi;
 
-public class Mapping: Profile
+public class Mapping : Profile
 {
     public Mapping()
     {
