@@ -100,16 +100,16 @@ public class HotelController(IRepository<Hotel> repository, IRepository<Reserved
     /// </summary>
     /// <returns>структура {отель, минимальная цена комнаты, максимальная цена, средняя цена}</returns>
     [HttpGet("cost_info_about_hotels")]
-    public ActionResult<IEnumerable<ReturnTypeHotel>> GetTop()
+    public ActionResult<IEnumerable<ComposeDataHotelDto>> GetTop()
     {
         var rooms = repositoryRoom.GetAll();
-        var hotelCosts = repository.GetAll().Select(h => new ReturnTypeHotel
+        var hotelCosts = repository.GetAll().Select(h => new ComposeDataHotelDto
         (
             repository.GetAll().Where(hotel => hotel.Id == h.Id).Select(hotel => hotel),
             rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Min(rm => rm.Cost),
             rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Max(rm => rm.Cost),
             rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Average(rm => rm.Cost)
-        )).AsEnumerable();
+        ));
         return Ok(hotelCosts);
     }
 }

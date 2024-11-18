@@ -23,7 +23,7 @@ public class ReservedRooms
     /// <summary>
     /// Дата въезда
     /// </summary>
-    public required DateOnly? DateArrival { get; set; }
+    public required DateOnly DateArrival { get; set; }
 
     /// <summary>
     /// Дата выезда

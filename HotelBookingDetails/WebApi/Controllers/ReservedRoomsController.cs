@@ -45,8 +45,6 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
         var value = mapper.Map<ReservedRooms>(reservedRoom);
         var client = repositoryClient.GetById(reservedRoom.ClientId);
         var room = repositoryRoom.GetById(reservedRoom.RoomId);
-        if (value.DateDeparture != null) { DateOnly.ParseExact(reservedRoom.DateDeparture!, "yyyy-mm-dd"); }
-        value.DateArrival = DateOnly.ParseExact(reservedRoom.DateArrival, "yyyy-mm-dd");
         if (client == null)
             return NotFound("Клиент не найден по заданному id");
         value.Client = client;
@@ -69,9 +67,6 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
         var value = mapper.Map<ReservedRooms>(reservedRoom);
         var client = repositoryClient.GetById(reservedRoom.ClientId);
         var room = repositoryRoom.GetById(reservedRoom.RoomId);
-        if (value.DateDeparture != null)
-            DateOnly.ParseExact(reservedRoom.DateDeparture!, "yyyy-mm-dd");
-        value.DateArrival = DateOnly.ParseExact(reservedRoom.DateArrival, "yyyy-mm-dd");
         if (client == null)
             return NotFound("Клиент не найден по заданному id");
         value.Client = client;
@@ -99,14 +94,13 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
     /// <summary>
     /// Возвращает всех клиентов отеля
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="hotelId"></param>
     /// <returns>Список клиентов</returns>
-    [HttpGet("get_all_client_in_hotel/{name}")]
-    public ActionResult<IEnumerable<Client>> GetAllClientInHotel(string name)
+    [HttpGet("get_all_client_in_hotel/{hotelId}")]
+    public ActionResult<IEnumerable<Client>> GetAllClientInHotel(int hotelId)
     {
         try
         {
-            var hotelId = repositoryHotel.GetAll().Where(h => h.Name == name).Select(h => h.Id).First();
             var roomsInHotel = repositoryRoom.GetAll().Where(r => hotelId == r.HotelId).Select(r => r);
             if (roomsInHotel == null)
                 return NotFound("Комнаты для данного отеля не найдены");
@@ -117,9 +111,9 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
                 .ToList();
             return Ok(clientInHotel);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return NotFound("Отель с таким имененм не найден, Ошибка: \n" + ex);
+            return NotFound("Отель с таким имененм не найден" );
         }
     }
 
@@ -132,8 +126,6 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
     public ActionResult<IEnumerable<Room>> GetFreeRoomInCity(string city)
     {
         var hotelsInCity = repositoryHotel.GetAll().Where(h => h.City == city).Select(h => h.Id);
-        if (hotelsInCity.Any())
-            return NotFound("Отели в выбранном городе не найдены");
         var roomsInCity = repositoryRoom.GetAll().Where(r => hotelsInCity.Contains(r.HotelId)).Select(r => r);
         var reservRooms = repository.GetAll().Where(r => roomsInCity.Contains(r.Room) && r.DateDeparture == null).Select(r => r.Room);
         var freeRooms = roomsInCity.Where(r => !reservRooms.Contains(r)).Select(r => r);
@@ -145,7 +137,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
     /// </summary>
     /// <returns>Список клиентов</returns>
     [HttpGet("get_clients_with_the_longest_hotel_stays")]
-    public ActionResult<IEnumerable<ReturnTypeReservedRooms>> GetLongLiversClient()
+    public ActionResult<IEnumerable<ComposeDataReservedRoomsDto>> GetLongLiversClient()
     {
         var longerPeriods = repository.GetAll()
             .GroupBy(c => c.Client)
@@ -161,7 +153,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repository, IRepo
             {
                 Client = c.Key,
                 Total = c.Sum(r => r.Period)
-            }).Where(c => c.Total == longerPeriods).Select(c => new ReturnTypeReservedRooms(c.Client, c.Total)).ToList();
+            }).Where(c => c.Total == longerPeriods).Select(c => new ComposeDataReservedRoomsDto(c.Client, c.Total)).ToList();
         return Ok(clientWithLongerPer);
     }
 }
