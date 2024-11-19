@@ -89,13 +89,13 @@ public class HotelController(IRepository<Hotel> repositoryHotel, IRepository<Res
     /// </summary>
     /// <returns>список отелей</returns>
     [HttpGet("top_5_hotels_by_number_of_bookings")]
-    public ActionResult<IEnumerable<Hotel>> GetTopFiveHotels()
+    public ActionResult<IEnumerable<HotelsTopFiveDto>> GetTopFiveHotels()
     {
         var result = (from reserverdRooms in repositoryReserved.GetAll()
                       join hotel in repositoryHotel.GetAll() on reserverdRooms.Room.HotelId equals hotel.Id
                       group repositoryRoom by hotel into g
-                      select new { Hotel = g.Key, Count = g.Count() })
-                     .OrderBy(h => h.Count)
+                      select new HotelsTopFiveDto(g.Key, g.Count()))
+                     .OrderBy(h => h.CountOfBookings)
                      .Take(5);
 
         return Ok(result);
