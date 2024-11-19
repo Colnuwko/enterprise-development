@@ -8,12 +8,12 @@ namespace HotelBookingDetails.WebApi.Dto;
 /// <remarks>
 /// Структура {Минимальная цена, Максимальная цена, Средняя цена, Отель}
 /// </remarks>
-public class ComposeDataHotelDto(IEnumerable<Hotel> hotel, int min, int max, double avg)
+public class HotelsRoomCostDto(Hotel hotel, int min, int max, double avg)
 {
     /// <summary>
     /// Отель
     /// </summary>
-    public IEnumerable<Hotel> Hotel { get; set; } = hotel;
+    public Hotel Hotel { get; set; } = hotel;
 
     /// <summary>
     /// Минимальная цена

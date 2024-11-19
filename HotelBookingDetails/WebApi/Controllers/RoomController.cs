@@ -7,7 +7,7 @@ namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> repositoryType, IMapper mapper) : ControllerBase
+public class RoomController(IRepository<Room> repositoryRoom, IRepository<TypeRoom> repositoryType, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Запрос возвращающий список всех комнат
@@ -16,7 +16,7 @@ public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> 
     [HttpGet]
     public ActionResult<IEnumerable<Room>> Get()
     {
-        return Ok(repository.GetAll());
+        return Ok(repositoryRoom.GetAll());
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> 
     [HttpGet("{id}")]
     public ActionResult<Room> Get(int id)
     {
-        var room = repository.GetById(id);
+        var room = repositoryRoom.GetById(id);
         if (room == null)
             return NotFound("Комната с заданным id не найден");
         return Ok(room);
@@ -42,7 +42,7 @@ public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> 
     public IActionResult Post([FromBody] RoomDto room)
     {
         var value = mapper.Map<Room>(room);
-        repository.Post(value);
+        repositoryRoom.Post(value);
         return Ok();
     }
 
@@ -58,7 +58,7 @@ public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> 
         if (repositoryType.GetById(room.TypeId) == null)
             return NotFound("Комната с заданным Typeid не найден(тип комнаты неверен)");
         var value = mapper.Map<Room>(room);
-        if (repository.Put(id, value))
+        if (repositoryRoom.Put(id, value))
             return Ok();
         return NotFound("Объект по заданному id не найден");
     }
@@ -71,7 +71,7 @@ public class RoomController(IRepository<Room> repository, IRepository<TypeRoom> 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.Delete(id))
+        if (repositoryRoom.Delete(id))
             return Ok();
         return NotFound("Объект по заданному id не найден");
     }

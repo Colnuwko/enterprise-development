@@ -7,7 +7,7 @@ namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ClientController(IRepository<Client> repository, IRepository<Passport> repositoryPassport, IMapper mapper) : ControllerBase
+public class ClientController(IRepository<Client> repositoryClient, IRepository<Passport> repositoryPassport, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Запрос возвращающий список всех клиентов
@@ -16,7 +16,7 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     [HttpGet]
     public ActionResult<IEnumerable<Client>> Get()
     {
-        return Ok(repository.GetAll());
+        return Ok(repositoryClient.GetAll());
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     [HttpGet("{id}")]
     public ActionResult<Client> Get(int id)
     {
-        var client = repository.GetById(id);
+        var client = repositoryClient.GetById(id);
         if (client == null)
             return NotFound();
         return Ok(client);
@@ -45,7 +45,7 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
             return NotFound("Не найдены паспортные данные по заданному id");
         var value = mapper.Map<Client>(client);
         value.PassportData = repositoryPassport.GetById(client.PassportDataId)!;
-        repository.Post(value);
+        repositoryClient.Post(value);
         return Ok();
     }
 
@@ -61,7 +61,7 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
         if (repositoryPassport.GetById(client.PassportDataId) == null)
             return NotFound("Не найдены паспортные данные по заданному id");
         var value = mapper.Map<Client>(client);
-        if (repository.Put(id, value))
+        if (repositoryClient.Put(id, value))
             return Ok();
         return NotFound("Объект по заданному id не найден");
     }
@@ -74,7 +74,7 @@ public class ClientController(IRepository<Client> repository, IRepository<Passpo
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.Delete(id))
+        if (repositoryClient.Delete(id))
             return Ok();
         return NotFound("Объект по заданному id не найден");
     }

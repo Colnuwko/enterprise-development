@@ -8,7 +8,7 @@ namespace HotelBookingDetails.WebApi.Dto;
 /// <remarks>
 /// Структура {суммарное время проживания, Клиент}
 /// </remarks>
-public class ComposeDataReservedRoomsDto(Client client, int total)
+public class ClientTotalDayDto(Client client, int total)
 {
     /// <summary>
     /// Клиент

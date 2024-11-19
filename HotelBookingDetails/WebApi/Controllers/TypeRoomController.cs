@@ -7,7 +7,7 @@ namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper) : ControllerBase
+public class TypeRoomController(IRepository<TypeRoom> repositoryTypeRoom, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Запрос возвращающий список типов комнат
@@ -16,7 +16,7 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     [HttpGet]
     public ActionResult<IEnumerable<TypeRoom>> Get()
     {
-        return Ok(repository.GetAll());
+        return Ok(repositoryTypeRoom.GetAll());
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     [HttpGet("{id}")]
     public ActionResult<TypeRoom> Get(int id)
     {
-        var typeRoom = repository.GetById(id);
+        var typeRoom = repositoryTypeRoom.GetById(id);
         if (typeRoom == null)
             return NotFound("Тип комнаты с заданным id не найден");
         return Ok(typeRoom);
@@ -42,7 +42,7 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     public IActionResult Post([FromBody] TypeRoomDto typeRoom)
     {
         var value = mapper.Map<TypeRoom>(typeRoom);
-        repository.Post(value);
+        repositoryTypeRoom.Post(value);
         return Ok();
     }
 
@@ -56,7 +56,7 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     public IActionResult Put(int id, [FromBody] TypeRoomDto typeRoom)
     {
         var value = mapper.Map<TypeRoom>(typeRoom);
-        if (repository.Put(id, value))
+        if (repositoryTypeRoom.Put(id, value))
             return Ok();
         return NotFound("Объект по заданному id не найден");
     }
@@ -69,7 +69,7 @@ public class TypeRoomController(IRepository<TypeRoom> repository, IMapper mapper
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.Delete(id))
+        if (repositoryTypeRoom.Delete(id))
             return Ok();
         return NotFound("Объект по заданному id не найден");
     }

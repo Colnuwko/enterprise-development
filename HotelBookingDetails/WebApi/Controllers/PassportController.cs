@@ -7,7 +7,7 @@ namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PassportController(IRepository<Passport> repository, IMapper mapper) : ControllerBase
+public class PassportController(IRepository<Passport> repositoryPassport, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Запрос возвращающий список всех паспортов
@@ -17,7 +17,7 @@ public class PassportController(IRepository<Passport> repository, IMapper mapper
     [ProducesResponseType(typeof(Passport), 200)]
     public ActionResult<IEnumerable<Passport>> Get()
     {
-        return Ok(repository.GetAll());
+        return Ok(repositoryPassport.GetAll());
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ public class PassportController(IRepository<Passport> repository, IMapper mapper
     [HttpGet("{id}")]
     public ActionResult<Passport> Get(int id)
     {
-        var client = repository.GetById(id);
+        var client = repositoryPassport.GetById(id);
         if (client == null)
             return NotFound();
         return Ok(client);
@@ -43,7 +43,7 @@ public class PassportController(IRepository<Passport> repository, IMapper mapper
     public IActionResult Post([FromBody] PassportDto passport)
     {
         var value = mapper.Map<Passport>(passport);
-        repository.Post(value);
+        repositoryPassport.Post(value);
         return Ok();
     }
 
@@ -57,7 +57,7 @@ public class PassportController(IRepository<Passport> repository, IMapper mapper
     public IActionResult Put(int id, [FromBody] PassportDto passport)
     {
         var value = mapper.Map<Passport>(passport);
-        if (repository.Put(id, value))
+        if (repositoryPassport.Put(id, value))
             return Ok();
         return NotFound("Объект по заданному id не найден");
     }
@@ -70,7 +70,7 @@ public class PassportController(IRepository<Passport> repository, IMapper mapper
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        if (repository.Delete(id))
+        if (repositoryPassport.Delete(id))
             return Ok();
         return NotFound("Объект по заданному id не найден");
     }

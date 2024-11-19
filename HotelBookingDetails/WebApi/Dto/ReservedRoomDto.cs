@@ -1,6 +1,4 @@
-﻿using HotelBookingDetails.Domain;
-
-namespace HotelBookingDetails.WebApi.Dto;
+﻿namespace HotelBookingDetails.WebApi.Dto;
 
 public class ReservedRoomsDto
 {
