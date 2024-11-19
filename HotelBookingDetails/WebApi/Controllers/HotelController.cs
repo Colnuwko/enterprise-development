@@ -97,7 +97,6 @@ public class HotelController(IRepository<Hotel> repositoryHotel, IRepository<Res
                       select new HotelsTopFiveDto(g.Key, g.Count()))
                      .OrderBy(h => h.CountOfBookings)
                      .Take(5);
-
         return Ok(result);
     }
 

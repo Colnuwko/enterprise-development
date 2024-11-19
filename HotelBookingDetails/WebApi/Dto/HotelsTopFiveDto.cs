@@ -6,7 +6,7 @@ namespace HotelBookingDetails.WebApi.Dto;
 /// Это кастомный класс для возвращаемого значения аналитического запроса
 /// </summary>
 /// <remarks>
-/// Структура {Минимальная цена, Максимальная цена, Средняя цена, Отель}
+/// Структура {Отель, количество бронирований}
 /// </remarks>
 public class HotelsTopFiveDto(Hotel hotel, int countOfBookings)
 {
