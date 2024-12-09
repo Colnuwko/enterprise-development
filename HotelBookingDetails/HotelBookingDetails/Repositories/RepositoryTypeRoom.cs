@@ -1,16 +1,17 @@
-﻿namespace HotelBookingDetails.Domain.Repositories;
+﻿using HotelBookingDetails.Domain.Context;
+using HotelBookingDetails.Domain.Entity;
 
-public class RepositoryTypeRoom : IRepository<TypeRoom>
+namespace HotelBookingDetails.Domain.Repositories;
+
+public class RepositoryTypeRoom(HotelBookingDbContext hotelBookingDbContext) : IRepository<TypeRoom>
 {
-    private readonly List<TypeRoom> _typeRoom = [];
-    private int _typeRoomId = 1;
-
     public bool Put(int id, TypeRoom typeRoom)
     {
         var oldValue = GetById(id);
         if (oldValue == null)
             return false;
         oldValue.Name = typeRoom.Name;
+        hotelBookingDbContext.SaveChanges();
         return true;
     }
 
@@ -18,18 +19,19 @@ public class RepositoryTypeRoom : IRepository<TypeRoom>
     {
         var typeRoom = GetById(id);
         if (typeRoom == null) 
-            return false; 
-        _typeRoom.Remove(typeRoom);
+            return false;
+        hotelBookingDbContext.TypeRooms.Remove(typeRoom);
+        hotelBookingDbContext.SaveChanges();
         return true;
     }
 
     public void Post(TypeRoom typeRoom)
     {
-        typeRoom.Id = _typeRoomId++;
-        _typeRoom.Add(typeRoom);
+        hotelBookingDbContext.TypeRooms.Add(typeRoom);
+        hotelBookingDbContext.SaveChanges();
     }
 
-    public TypeRoom? GetById(int id) => _typeRoom.Find(t => t.Id == id);
+    public TypeRoom? GetById(int id) => hotelBookingDbContext.TypeRooms.FirstOrDefault(t => t.Id == id);
 
-    public IEnumerable<TypeRoom> GetAll() => _typeRoom;
+    public IEnumerable<TypeRoom> GetAll() => hotelBookingDbContext.TypeRooms;
 }

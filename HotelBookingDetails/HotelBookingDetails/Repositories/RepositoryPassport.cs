@@ -1,10 +1,10 @@
-﻿namespace HotelBookingDetails.Domain.Repositories;
+﻿using HotelBookingDetails.Domain.Context;
+using HotelBookingDetails.Domain.Entity;
 
-public class RepositoryPassport : IRepository<Passport>
+namespace HotelBookingDetails.Domain.Repositories;
+
+public class RepositoryPassport(HotelBookingDbContext hotelBookingDbContext) : IRepository<Passport>
 {
-    private readonly List<Passport> _passports = [];
-    private int _passportId = 1;
-
     public bool Put(int id, Passport passport)
     {
         var oldValue = GetById(id);
@@ -12,6 +12,7 @@ public class RepositoryPassport : IRepository<Passport>
             return false;
         oldValue.Number = passport.Number;
         oldValue.Series = passport.Series;
+        hotelBookingDbContext.SaveChanges();
         return true;
     }
 
@@ -19,18 +20,19 @@ public class RepositoryPassport : IRepository<Passport>
     {
         var passport = GetById(id);
         if (passport == null) 
-            return false; 
-        _passports.Remove(passport);
+            return false;
+        hotelBookingDbContext.Passports.Remove(passport);
+        hotelBookingDbContext.SaveChanges();
         return true;
     }
 
     public void Post(Passport passport)
     {
-        passport.Id = _passportId++;
-        _passports.Add(passport);
+        hotelBookingDbContext.Passports.Add(passport);
+        hotelBookingDbContext.SaveChanges();
     }
 
-    public Passport? GetById(int id) => _passports.Find(p => p.Id == id);
+    public Passport? GetById(int id) => hotelBookingDbContext.Passports.FirstOrDefault(p => p.Id == id);
 
-    public IEnumerable<Passport> GetAll() => _passports;
+    public IEnumerable<Passport> GetAll() => hotelBookingDbContext.Passports;
 }

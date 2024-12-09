@@ -1,10 +1,10 @@
-﻿namespace HotelBookingDetails.Domain.Repositories;
+﻿using HotelBookingDetails.Domain.Context;
+using HotelBookingDetails.Domain.Entity;
 
-public class RepositoryHotel : IRepository<Hotel>
+namespace HotelBookingDetails.Domain.Repositories;
+
+public class RepositoryHotel(HotelBookingDbContext hotelBookingDbContext) : IRepository<Hotel>
 {
-    private readonly List<Hotel> _hotels = [];
-    private int _hotelId = 1;
-
     public bool Put(int id, Hotel hotel)
     {
         var oldValue = GetById(id);
@@ -13,6 +13,7 @@ public class RepositoryHotel : IRepository<Hotel>
         oldValue.Address = hotel.Address;
         oldValue.City = hotel.City;
         oldValue.Name = hotel.Name;
+        hotelBookingDbContext.SaveChanges();
         return true;
     }
 
@@ -20,18 +21,19 @@ public class RepositoryHotel : IRepository<Hotel>
     {
         var hotel = GetById(id);
         if (hotel == null)
-            return false; 
-        _hotels.Remove(hotel);
+            return false;
+        hotelBookingDbContext.Hotels.Remove(hotel);
+        hotelBookingDbContext.SaveChanges();
         return true;
     }
 
     public void Post(Hotel hotel)
-    {
-        hotel.Id = _hotelId++;
-        _hotels.Add(hotel);
+    { 
+        hotelBookingDbContext.Hotels.Add(hotel);
+        hotelBookingDbContext.SaveChanges();
     }
 
-    public Hotel? GetById(int id) => _hotels.Find(h => h.Id == id);
+    public Hotel? GetById(int id) => hotelBookingDbContext.Hotels.FirstOrDefault(h => h.Id == id);
 
-    public IEnumerable<Hotel> GetAll() => _hotels;
+    public IEnumerable<Hotel> GetAll() => hotelBookingDbContext.Hotels;
 }

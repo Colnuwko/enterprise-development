@@ -1,10 +1,10 @@
-﻿namespace HotelBookingDetails.Domain.Repositories;
+﻿using HotelBookingDetails.Domain.Context;
+using HotelBookingDetails.Domain.Entity;
 
-public class RepositoryReservedRooms : IRepository<ReservedRooms>
+namespace HotelBookingDetails.Domain.Repositories;
+
+public class RepositoryReservedRooms(HotelBookingDbContext hotelBookingDbContext) : IRepository<ReservedRooms>
 {
-    private readonly List<ReservedRooms> _reservedRooms = [];
-    private int _reservedRoomId = 1;
-
     public bool Put(int id, ReservedRooms reservedRooms)
     {
         var oldValue = GetById(id);
@@ -15,6 +15,7 @@ public class RepositoryReservedRooms : IRepository<ReservedRooms>
         oldValue.DateArrival = reservedRooms.DateArrival;
         oldValue.Client = reservedRooms.Client;
         oldValue.Room = reservedRooms.Room;
+        hotelBookingDbContext.SaveChanges();
         return true;
     }
 
@@ -22,18 +23,19 @@ public class RepositoryReservedRooms : IRepository<ReservedRooms>
     {
         var reservedRoom = GetById(id);
         if (reservedRoom == null) 
-            return false; 
-        _reservedRooms.Remove(reservedRoom);
+            return false;
+        hotelBookingDbContext.ReservedRooms.Remove(reservedRoom);
+        hotelBookingDbContext.SaveChanges();
         return true;
     }
 
     public void Post(ReservedRooms reservedRooms)
     {
-        reservedRooms.Id = _reservedRoomId++;
-        _reservedRooms.Add(reservedRooms);
+        hotelBookingDbContext.ReservedRooms.Add(reservedRooms);
+        hotelBookingDbContext.SaveChanges();
     }
 
-    public ReservedRooms? GetById(int id) => _reservedRooms.Find(r => r.Id == id);
+    public ReservedRooms? GetById(int id) => hotelBookingDbContext.ReservedRooms.FirstOrDefault(r => r.Id == id);
 
-    public IEnumerable<ReservedRooms> GetAll() => _reservedRooms;
+    public IEnumerable<ReservedRooms> GetAll() => hotelBookingDbContext.ReservedRooms;
 }

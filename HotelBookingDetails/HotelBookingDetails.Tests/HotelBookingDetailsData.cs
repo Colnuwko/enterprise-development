@@ -1,4 +1,4 @@
-﻿using HotelBookingDetails.Domain;
+﻿using HotelBookingDetails.Domain.Entity;
 
 
 namespace HotelBookingDetails.Tests;

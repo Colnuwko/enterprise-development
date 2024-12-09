@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using HotelBookingDetails.Domain;
 using HotelBookingDetails.Domain.Repositories;
 using AutoMapper;
 using HotelBookingDetails.WebApi.Dto;
+using HotelBookingDetails.Domain.Entity;
 namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
