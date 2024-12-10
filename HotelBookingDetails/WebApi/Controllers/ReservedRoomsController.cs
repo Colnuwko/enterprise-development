@@ -3,6 +3,7 @@ using HotelBookingDetails.Domain.Repositories;
 using AutoMapper;
 using HotelBookingDetails.WebApi.Dto;
 using HotelBookingDetails.Domain.Entity;
+using System.Linq;
 namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
@@ -114,6 +115,13 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     [HttpGet("get_all_free_rooms/{city}")]
     public ActionResult<IEnumerable<Room>> GetFreeRoomInCity(string city)
     {
+        if (repositoryReservedRooms.GetAll().Count() == 0)
+        {
+            var rooms = from room in repositoryRoom.GetAll()
+                        where room.Hotel.City == city
+                        select room;
+            return Ok(rooms);
+        }    
         var result = from reserverdRoom in repositoryReservedRooms.GetAll()
                      join hotel in repositoryHotel.GetAll() on reserverdRoom.Room.Hotel.Id equals hotel.Id
                      where hotel.City == city && reserverdRoom.DateDeparture != null
@@ -129,6 +137,8 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     [HttpGet("get_clients_with_the_longest_hotel_stays")]
     public ActionResult<IEnumerable<ClientTotalDayDto>> GetLongLiversClient()
     {
+        if (repositoryReservedRooms.GetAll().Count() == 0)
+            return NotFound("Информация о бронировании отсутствует. Пожалуйста, добавьте новые записи о бронировании");
         var longerPeriods = repositoryReservedRooms.GetAll()
             .GroupBy(c => c.Client)
             .Select(c => new

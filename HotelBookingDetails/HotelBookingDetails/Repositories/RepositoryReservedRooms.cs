@@ -1,5 +1,6 @@
 ﻿using HotelBookingDetails.Domain.Context;
 using HotelBookingDetails.Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingDetails.Domain.Repositories;
 
@@ -22,7 +23,7 @@ public class RepositoryReservedRooms(HotelBookingDbContext hotelBookingDbContext
     public bool Delete(int id)
     {
         var reservedRoom = GetById(id);
-        if (reservedRoom == null) 
+        if (reservedRoom == null)
             return false;
         hotelBookingDbContext.ReservedRooms.Remove(reservedRoom);
         hotelBookingDbContext.SaveChanges();
@@ -37,5 +38,13 @@ public class RepositoryReservedRooms(HotelBookingDbContext hotelBookingDbContext
 
     public ReservedRooms? GetById(int id) => hotelBookingDbContext.ReservedRooms.FirstOrDefault(r => r.Id == id);
 
-    public IEnumerable<ReservedRooms> GetAll() => hotelBookingDbContext.ReservedRooms;
+    public IEnumerable<ReservedRooms> GetAll()
+    {
+        return hotelBookingDbContext.ReservedRooms
+            .Include(rr => rr.Client)
+            .ThenInclude(rr => rr.PassportData)
+            .Include(rr => rr.Room)
+            .ThenInclude(rr => rr.Type)
+            .Include(rr => rr.Room.Hotel);
+    }
 }

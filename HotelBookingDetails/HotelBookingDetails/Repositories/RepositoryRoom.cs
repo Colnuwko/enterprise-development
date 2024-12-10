@@ -1,5 +1,6 @@
 ﻿using HotelBookingDetails.Domain.Context;
 using HotelBookingDetails.Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingDetails.Domain.Repositories;
 
@@ -36,5 +37,5 @@ public class RepositoryRoom(HotelBookingDbContext hotelBookingDbContext) : IRepo
 
     public Room? GetById(int id) => hotelBookingDbContext.Rooms.FirstOrDefault(r => r.Id == id);
 
-    public IEnumerable<Room> GetAll() => hotelBookingDbContext.Rooms;
+    public IEnumerable<Room> GetAll() => hotelBookingDbContext.Rooms.Include(r => r.Type).Include(r => r.Hotel);
 }

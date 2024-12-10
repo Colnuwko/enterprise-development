@@ -7,7 +7,7 @@ namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RoomController(IRepository<Room> repositoryRoom, IRepository<TypeRoom> repositoryType, IMapper mapper) : ControllerBase
+public class RoomController(IRepository<Room> repositoryRoom, IRepository<TypeRoom> repositoryType, IRepository<Hotel> repositoryHotel, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Запрос возвращающий список всех комнат
@@ -41,7 +41,15 @@ public class RoomController(IRepository<Room> repositoryRoom, IRepository<TypeRo
     [HttpPost]
     public IActionResult Post([FromBody] RoomDto room)
     {
+        var hotel = repositoryHotel.GetById(room.HotelId);
+        if (hotel == null)
+            return NotFound("Не найден отель по заданному id");
+        var type = repositoryType.GetById(room.TypeId);
+        if (type == null)
+            return NotFound("Не найден тип комнаты по заданному id");
         var value = mapper.Map<Room>(room);
+        value.Hotel = hotel;
+        value.Type = type;
         repositoryRoom.Post(value);
         return Ok();
     }

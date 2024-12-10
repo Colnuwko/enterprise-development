@@ -16,7 +16,8 @@ public class ClientController(IRepository<Client> repositoryClient, IRepository<
     [HttpGet]
     public ActionResult<IEnumerable<Client>> Get()
     {
-        return Ok(repositoryClient.GetAll());
+        var value = repositoryClient.GetAll();
+        return Ok(value);
     }
 
     /// <summary>

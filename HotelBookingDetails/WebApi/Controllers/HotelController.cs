@@ -3,6 +3,7 @@ using HotelBookingDetails.Domain.Repositories;
 using AutoMapper;
 using HotelBookingDetails.WebApi.Dto;
 using HotelBookingDetails.Domain.Entity;
+using System.Linq;
 namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
@@ -91,10 +92,8 @@ public class HotelController(IRepository<Hotel> repositoryHotel, IRepository<Res
     [HttpGet("top_5_hotels_by_number_of_bookings")]
     public ActionResult<IEnumerable<HotelsTopFiveDto>> GetTopFiveHotels()
     {
-        var result = (from reserverdRooms in repositoryReserved.GetAll()
-                      join hotel in repositoryHotel.GetAll() on reserverdRooms.Room.Hotel.Id equals hotel.Id
-                      group repositoryRoom by hotel into g
-                      select new HotelsTopFiveDto(g.Key, g.Count()))
+        var result = (repositoryReserved.GetAll().GroupBy(rr => rr.Room.Hotel).
+                      Select(rr => new HotelsTopFiveDto(rr.Key, rr.Count())))
                      .OrderBy(h => h.CountOfBookings)
                      .Take(5);
         return Ok(result);
@@ -107,14 +106,13 @@ public class HotelController(IRepository<Hotel> repositoryHotel, IRepository<Res
     [HttpGet("cost_info_about_hotels")]
     public ActionResult<IEnumerable<HotelsRoomCostDto>> GetTop()
     {
-        var rooms = repositoryRoom.GetAll();
-        var hotelCosts = repositoryHotel.GetAll().Select(h => new HotelsRoomCostDto
+        var hotelCosts = repositoryRoom.GetAll().GroupBy(r => r.Hotel).Select(r => new HotelsRoomCostDto
         (
-            h,
-            rooms.Where(r => r.Hotel.Id == h.Id).Min(rm => rm.Cost),
-            rooms.Where(r => r.Hotel.Id == h.Id).Max(rm => rm.Cost),
-            rooms.Where(r => r.Hotel.Id == h.Id).Average(rm => rm.Cost)
-        ));
+            r.Key,
+            r.Min(rm => rm.Cost),
+            r.Max(rm => rm.Cost),
+            r.Average(rm => rm.Cost))
+        );
         return Ok(hotelCosts);
     }
 }

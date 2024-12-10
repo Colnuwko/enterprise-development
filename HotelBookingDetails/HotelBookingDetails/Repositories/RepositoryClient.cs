@@ -1,6 +1,6 @@
 ﻿using HotelBookingDetails.Domain.Entity;
 using HotelBookingDetails.Domain.Context;
-
+using Microsoft.EntityFrameworkCore;
 namespace HotelBookingDetails.Domain.Repositories;
 
 public class RepositoryClient(HotelBookingDbContext hotelBookingDbContext) : IRepository<Client>
@@ -33,7 +33,7 @@ public class RepositoryClient(HotelBookingDbContext hotelBookingDbContext) : IRe
         hotelBookingDbContext.SaveChanges();
     }
 
-    public Client? GetById(int id) => hotelBookingDbContext.Clients.FirstOrDefault(c => c.Id == id);
+    public Client? GetById(int id) => hotelBookingDbContext.Clients.Include(c => c.PassportData).FirstOrDefault(c => c.Id == id);
 
-    public IEnumerable<Client> GetAll() => hotelBookingDbContext.Clients;
+    public IEnumerable<Client> GetAll() => hotelBookingDbContext.Clients.Include(c => c.PassportData);
 }
