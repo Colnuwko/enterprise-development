@@ -41,10 +41,11 @@ public class ClientController(IRepository<Client> repositoryClient, IRepository<
     [HttpPost]
     public IActionResult Post([FromBody] ClientDto client)
     {
-        if (repositoryPassport.GetById(client.PassportDataId) == null)
+        var passport = repositoryPassport.GetById(client.PassportDataId);
+        if (passport == null)
             return NotFound("Не найдены паспортные данные по заданному id");
         var value = mapper.Map<Client>(client);
-        value.PassportData = repositoryPassport.GetById(client.PassportDataId)!;
+        value.PassportData = passport!;
         repositoryClient.Post(value);
         return Ok();
     }
@@ -58,7 +59,8 @@ public class ClientController(IRepository<Client> repositoryClient, IRepository<
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] ClientDto client)
     {
-        if (repositoryPassport.GetById(client.PassportDataId) == null)
+        var passport = repositoryPassport.GetById(client.PassportDataId);
+        if (passport == null)
             return NotFound("Не найдены паспортные данные по заданному id");
         var value = mapper.Map<Client>(client);
         if (repositoryClient.Put(id, value))
