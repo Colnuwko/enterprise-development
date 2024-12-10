@@ -10,7 +10,7 @@ public class RepositoryRoom(HotelBookingDbContext hotelBookingDbContext) : IRepo
         var oldValue = GetById(id);
         if (oldValue == null)
             return false;
-        oldValue.HotelId = room.HotelId;
+        oldValue.Hotel = room.Hotel;
         oldValue.Cost = room.Cost;
         oldValue.Capacity = room.Capacity;
         oldValue.Type = room.Type;

@@ -38,9 +38,18 @@ public class HotelBookingDetailsData
 
     ];
 
+    public List<Hotel> Hotels =
+        [
+            new(){ Id = 0, Name = "Гостиница Москва", Address = "Новосадовая 34Э", City = "Вашингтон"},
+            new(){ Id = 1, Name = "Grand Hotel", Address = "Park Avenue 123", City = "New York"},
+            new() { Id = 2, Name = "Hilton", Address = "Main Street 55", City = "Chicago" },
+            new() { Id = 3, Name = "Marriott", Address = "Sunset Boulevard 87", City = "Los Angeles" },
+            new() { Id = 4, Name = "Hyatt Regency", Address = "Lake Shore Drive 100", City = "Chicago" },
+            new() { Id = 5, Name = "Ritz-Carlton", Address = "Michigan Avenue 160", City = "Chicago" },
+        ];
+
 
     public List<Room> Rooms;
-    public List<Hotel> Hotels;
     public List<Client> Clients;
     public List<ReservedRooms> ReservedRooms;
 
@@ -189,40 +198,32 @@ public class HotelBookingDetailsData
                 Birthday =  new DateOnly(2002, 02, 17)
             }
         ];
+
         Rooms =
         [
-            new(){Id = 1, Capacity = 2, Cost = 3000, Type = TypesRoom[0], HotelId = 0},
-            new(){Id = 2, Capacity = 1, Cost = 4000, Type = TypesRoom[1], HotelId = 0},
-            new(){Id = 3, Capacity = 3, Cost = 5000, Type = TypesRoom[2], HotelId = 0},
-            new(){Id = 4, Capacity = 2, Cost = 6000, Type = TypesRoom[3], HotelId = 0},
-            new(){Id = 5, Capacity = 1, Cost = 7000, Type = TypesRoom[0], HotelId = 1},
-            new(){Id = 6, Capacity = 5, Cost = 8000, Type = TypesRoom[1], HotelId = 1},
-            new(){Id = 7, Capacity = 3, Cost = 9000, Type = TypesRoom[2], HotelId = 1},
-            new(){Id = 8, Capacity = 2, Cost = 10000, Type = TypesRoom[3], HotelId = 1},
-            new(){Id = 9, Capacity = 1, Cost = 11000, Type = TypesRoom[0], HotelId = 2},
-            new(){Id = 10, Capacity = 4, Cost = 12000, Type = TypesRoom[1], HotelId = 2},
-            new(){Id = 11, Capacity = 2, Cost = 13000, Type = TypesRoom[2], HotelId = 2},
-            new(){Id = 12, Capacity = 1, Cost = 14000, Type = TypesRoom[3], HotelId = 2},
-            new(){Id = 13, Capacity = 3, Cost = 15000, Type = TypesRoom[0], HotelId = 3},
-            new(){Id = 14, Capacity = 2, Cost = 16000, Type = TypesRoom[1], HotelId = 3},
-            new(){Id = 15, Capacity = 5, Cost = 17000, Type = TypesRoom[2], HotelId = 3},
-            new(){Id = 16, Capacity = 1, Cost = 18000, Type = TypesRoom[3], HotelId = 3},
-            new(){Id = 17, Capacity = 4, Cost = 19000, Type = TypesRoom[0], HotelId = 4},
-            new(){Id = 18, Capacity = 3, Cost = 20000, Type = TypesRoom[1], HotelId = 4},
-            new(){Id = 19, Capacity = 2, Cost = 21000, Type = TypesRoom[2], HotelId = 4},
-            new(){Id = 20, Capacity = 1, Cost = 22000, Type = TypesRoom[3], HotelId = 4},
-            new(){Id = 21, Capacity = 5, Cost = 23000, Type = TypesRoom[0], HotelId = 5},
+            new(){Id = 1, Capacity = 2, Cost = 3000, Type = TypesRoom[0], Hotel = Hotels[0]},
+            new(){Id = 2, Capacity = 1, Cost = 4000, Type = TypesRoom[1], Hotel = Hotels[0]},
+            new(){Id = 3, Capacity = 3, Cost = 5000, Type = TypesRoom[2], Hotel = Hotels[0]},
+            new(){Id = 4, Capacity = 2, Cost = 6000, Type = TypesRoom[3], Hotel = Hotels[0]},
+            new(){Id = 5, Capacity = 1, Cost = 7000, Type = TypesRoom[0], Hotel = Hotels[1]},
+            new(){Id = 6, Capacity = 5, Cost = 8000, Type = TypesRoom[1], Hotel = Hotels[1]},
+            new(){Id = 7, Capacity = 3, Cost = 9000, Type = TypesRoom[2], Hotel = Hotels[1]},
+            new(){Id = 8, Capacity = 2, Cost = 10000, Type = TypesRoom[3], Hotel = Hotels[1]},
+            new(){Id = 9, Capacity = 1, Cost = 11000, Type = TypesRoom[0], Hotel = Hotels[2]},
+            new(){Id = 10, Capacity = 4, Cost = 12000, Type = TypesRoom[1], Hotel = Hotels[2]},
+            new(){Id = 11, Capacity = 2, Cost = 13000, Type = TypesRoom[2], Hotel = Hotels[2]},
+            new(){Id = 12, Capacity = 1, Cost = 14000, Type = TypesRoom[3], Hotel = Hotels[2]},
+            new(){Id = 13, Capacity = 3, Cost = 15000, Type = TypesRoom[0], Hotel = Hotels[3]},
+            new(){Id = 14, Capacity = 2, Cost = 16000, Type = TypesRoom[1], Hotel = Hotels[3]},
+            new(){Id = 15, Capacity = 5, Cost = 17000, Type = TypesRoom[2], Hotel = Hotels[3]},
+            new(){Id = 16, Capacity = 1, Cost = 18000, Type = TypesRoom[3], Hotel = Hotels[3]},
+            new(){Id = 17, Capacity = 4, Cost = 19000, Type = TypesRoom[0], Hotel = Hotels[4]},
+            new(){Id = 18, Capacity = 3, Cost = 20000, Type = TypesRoom[1], Hotel = Hotels[4]},
+            new(){Id = 19, Capacity = 2, Cost = 21000, Type = TypesRoom[2], Hotel = Hotels[4]},
+            new(){Id = 20, Capacity = 1, Cost = 22000, Type = TypesRoom[3], Hotel = Hotels[4]},
+            new(){Id = 21, Capacity = 5, Cost = 23000, Type = TypesRoom[0], Hotel = Hotels[5]},
         ];
 
-        Hotels =
-        [
-            new(){Id = 0, Name = "Гостиница Москва", Address = "Новосадовая 34Э", City = "Вашингтон"},
-            new(){Id = 1, Name = "Grand Hotel", Address = "Park Avenue 123", City = "New York"},
-            new(){Id = 2, Name = "Hilton", Address = "Main Street 55", City = "Chicago"},
-            new(){Id = 3, Name = "Marriott", Address = "Sunset Boulevard 87", City = "Los Angeles"},
-            new(){Id = 4, Name = "Hyatt Regency", Address = "Lake Shore Drive 100", City = "Chicago"},
-            new(){Id = 5, Name = "Ritz-Carlton", Address = "Michigan Avenue 160", City = "Chicago"},
-        ];
         ReservedRooms =
         [
             new(){Id = 0, Client = Clients[0], DateArrival = new DateOnly(2024, 4, 28), Period = 10, Room = Rooms[0]},

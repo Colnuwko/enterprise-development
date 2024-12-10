@@ -20,24 +20,29 @@ public class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext> optio
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Client>()
-             .HasOne(p => p.PassportData)
+             .HasOne(c => c.PassportData)
                 .WithMany()
                 .HasForeignKey("passport_id")
                 .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<ReservedRooms>()
-            .HasOne(p => p.Client)
+            .HasOne(rr => rr.Client)
                 .WithMany()
                 .HasForeignKey("client_id")
                 .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<ReservedRooms>()
-            .HasOne(p => p.Room)
+            .HasOne(rr => rr.Room)
                 .WithMany()
                 .HasForeignKey("room_id")
                 .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<Room>()
-           .HasOne(p => p.Type)
+           .HasOne(r => r.Type)
                .WithMany()
                .HasForeignKey("type_id")
+               .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Room>()
+           .HasOne(r => r.Hotel)
+               .WithMany()
+               .HasForeignKey("hotel_id")
                .OnDelete(DeleteBehavior.Cascade);
     }
 }

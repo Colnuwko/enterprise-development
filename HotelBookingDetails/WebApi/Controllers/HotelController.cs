@@ -92,7 +92,7 @@ public class HotelController(IRepository<Hotel> repositoryHotel, IRepository<Res
     public ActionResult<IEnumerable<HotelsTopFiveDto>> GetTopFiveHotels()
     {
         var result = (from reserverdRooms in repositoryReserved.GetAll()
-                      join hotel in repositoryHotel.GetAll() on reserverdRooms.Room.HotelId equals hotel.Id
+                      join hotel in repositoryHotel.GetAll() on reserverdRooms.Room.Hotel.Id equals hotel.Id
                       group repositoryRoom by hotel into g
                       select new HotelsTopFiveDto(g.Key, g.Count()))
                      .OrderBy(h => h.CountOfBookings)
@@ -111,9 +111,9 @@ public class HotelController(IRepository<Hotel> repositoryHotel, IRepository<Res
         var hotelCosts = repositoryHotel.GetAll().Select(h => new HotelsRoomCostDto
         (
             h,
-            rooms.Where(r => r.HotelId == h.Id).Min(rm => rm.Cost),
-            rooms.Where(r => r.HotelId == h.Id).Max(rm => rm.Cost),
-            rooms.Where(r => r.HotelId == h.Id).Average(rm => rm.Cost)
+            rooms.Where(r => r.Hotel.Id == h.Id).Min(rm => rm.Cost),
+            rooms.Where(r => r.Hotel.Id == h.Id).Max(rm => rm.Cost),
+            rooms.Where(r => r.Hotel.Id == h.Id).Average(rm => rm.Cost)
         ));
         return Ok(hotelCosts);
     }

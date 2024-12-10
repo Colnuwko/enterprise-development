@@ -43,5 +43,5 @@ public class Room
     /// </summary>
     [Column("hotel_id")]
     [Required]
-    public required int HotelId { get; set; }
+    public required Hotel Hotel { get; set; }
 }

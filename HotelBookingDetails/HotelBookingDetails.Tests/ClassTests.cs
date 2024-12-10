@@ -27,7 +27,7 @@ public class Test(HotelBookingDetailsData dataProvider) : IClassFixture<HotelBoo
         var clientInHotel = _dataProvider.ReservedRooms
             .OrderBy(r => r.Client.FullName)
             .Where(r => _dataProvider.Rooms
-            .Where(r => r.HotelId == hotelId)
+            .Where(r => r.Hotel.Id == hotelId)
             .Select(r => r).ToList().Contains(r.Room))
             .Select(r => r.Client)
             .ToList();
@@ -48,7 +48,7 @@ public class Test(HotelBookingDetailsData dataProvider) : IClassFixture<HotelBoo
 
 
         var topFiveHotel = _dataProvider.ReservedRooms
-            .GroupBy(r => r.Room.HotelId)
+            .GroupBy(r => r.Room.Hotel.Id)
             .Select(r => r.Key)
             .Take(5)
             .Join(_dataProvider.Hotels,
@@ -77,7 +77,7 @@ public class Test(HotelBookingDetailsData dataProvider) : IClassFixture<HotelBoo
             .Where(r => !_dataProvider.ReservedRooms.Where(r => r.DateDeparture == DateOnly.ParseExact("0001-01-01", "yyyy-mm-dd"))
                 .Select(r => r).ToList().Contains(r)
                 &&
-                _dataProvider.Rooms.Where(r => (_dataProvider.Hotels.Where(h => h.City == city).Select(h => h.Id).ToList()).Contains(r.HotelId))
+                _dataProvider.Rooms.Where(r => (_dataProvider.Hotels.Where(h => h.City == city).Select(h => h.Id).ToList()).Contains(r.Hotel.Id))
                 .Select(h => h).ToList().Contains(r.Room)
                 ).Select(r => r.Room).ToList();
         Assert.Equal(expectedRooms, freeRooms);
@@ -120,9 +120,9 @@ public class Test(HotelBookingDetailsData dataProvider) : IClassFixture<HotelBoo
         var hotelCosts = hotels.Select(h => new
         {
             Hotel = (_dataProvider.Hotels.Where(hotel => hotel.Id == h.Id).Select(hotel => hotel)),
-            Min = _dataProvider.Rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Min(rm => rm.Cost),
-            Max = _dataProvider.Rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Max(rm => rm.Cost),
-            Avg = _dataProvider.Rooms.Where(r => r.HotelId == h.Id).Select(r => r).ToList().Average(rm => rm.Cost)
+            Min = _dataProvider.Rooms.Where(r => r.Hotel.Id == h.Id).Select(r => r).ToList().Min(rm => rm.Cost),
+            Max = _dataProvider.Rooms.Where(r => r.Hotel.Id == h.Id).Select(r => r).ToList().Max(rm => rm.Cost),
+            Avg = _dataProvider.Rooms.Where(r => r.Hotel.Id == h.Id).Select(r => r).ToList().Average(rm => rm.Cost)
         }).ToList();
         Assert.Equal(3000, hotelCosts[0].Min);
         Assert.Equal(4500.00, hotelCosts[0].Avg, 2);

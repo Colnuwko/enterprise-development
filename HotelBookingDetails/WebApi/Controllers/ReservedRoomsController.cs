@@ -100,7 +100,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     public ActionResult<IEnumerable<Client>> GetAllClientInHotel(int hotelId)
     {
         var result = (from reservedRoom in repositoryReservedRooms.GetAll()
-                        where reservedRoom.Room.HotelId == hotelId
+                        where reservedRoom.Room.Hotel.Id == hotelId
                         select reservedRoom.Client)
                         .OrderBy(c => c.FullName);
         return Ok(result);
@@ -115,7 +115,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     public ActionResult<IEnumerable<Room>> GetFreeRoomInCity(string city)
     {
         var result = from reserverdRoom in repositoryReservedRooms.GetAll()
-                     join hotel in repositoryHotel.GetAll() on reserverdRoom.Room.HotelId equals hotel.Id
+                     join hotel in repositoryHotel.GetAll() on reserverdRoom.Room.Hotel.Id equals hotel.Id
                      where hotel.City == city && reserverdRoom.DateDeparture != null
                      select reserverdRoom.Room;
 
