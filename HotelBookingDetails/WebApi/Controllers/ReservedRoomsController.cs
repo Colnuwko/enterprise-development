@@ -126,10 +126,10 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
             return Ok(rooms);
         }
 
-        var result = from reserverdRoom in reservedRooms
+        var reservedRoom = from reserverdRoom in reservedRooms
                      where reserverdRoom.Room.Hotel.City == city && reserverdRoom.DateDeparture != null
                      select reserverdRoom.Room;
-        return Ok(result);
+        return Ok(reservedRoom);
     }
 
     /// <summary>
@@ -139,9 +139,10 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     [HttpGet("get_clients_with_the_longest_hotel_stays")]
     public ActionResult<IEnumerable<ClientTotalDayDto>> GetLongLiversClient()
     {
-        if (!repositoryReservedRooms.GetAll().Any())
+        var reservedRoom = repositoryReservedRooms.GetAll();
+        if (!reservedRoom.Any())
             return NotFound("Информация о бронировании отсутствует. Пожалуйста, добавьте новые записи о бронировании");
-        var longerPeriods = repositoryReservedRooms.GetAll()
+        var longerPeriods = reservedRoom
             .GroupBy(c => c.Client)
             .Select(c => new
             {
@@ -149,7 +150,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
                 Total = c.Sum(r => r.Period)
             }).Max(c => c.Total);
 
-        var clientWithLongerPer = repositoryReservedRooms.GetAll()
+        var clientWithLongerPer = reservedRoom
             .GroupBy(c => c.Client)
             .Select(c => new
             {
