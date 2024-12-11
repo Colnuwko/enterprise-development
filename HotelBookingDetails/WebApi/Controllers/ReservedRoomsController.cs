@@ -126,10 +126,10 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
             return Ok(rooms);
         }
 
-        var reservedRoom = from reserverdRoom in reservedRooms
-                     where reserverdRoom.Room.Hotel.City == city && reserverdRoom.DateDeparture != null
-                     select reserverdRoom.Room;
-        return Ok(reservedRoom);
+        var result = from reservedRoom in reservedRooms
+                     where reservedRoom.Room.Hotel.City == city && reservedRoom.DateDeparture != null
+                     select reservedRoom.Room;
+        return Ok(result);
     }
 
     /// <summary>
