@@ -126,7 +126,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
             return Ok(rooms);
         }
 
-        var reservedRoom = from reserverdRoom in reservedRooms
+        var result = from reservedRoom in reservedRooms
                      where reserverdRoom.Room.Hotel.City == city && reserverdRoom.DateDeparture != null
                      select reserverdRoom.Room;
         return Ok(reservedRoom);
