@@ -35,7 +35,7 @@ public class RepositoryRoom(HotelBookingDbContext hotelBookingDbContext) : IRepo
         hotelBookingDbContext.SaveChanges();
     }
 
-    public Room? GetById(int id) => hotelBookingDbContext.Rooms.FirstOrDefault(r => r.Id == id);
+    public Room? GetById(int id) => hotelBookingDbContext.Rooms.Include(r => r.Type).Include(r => r.Hotel).FirstOrDefault(r => r.Id == id);
 
     public IEnumerable<Room> GetAll() => hotelBookingDbContext.Rooms.Include(r => r.Type).Include(r => r.Hotel);
 }

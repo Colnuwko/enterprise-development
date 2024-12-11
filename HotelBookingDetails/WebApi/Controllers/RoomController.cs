@@ -63,9 +63,15 @@ public class RoomController(IRepository<Room> repositoryRoom, IRepository<TypeRo
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] RoomDto room)
     {
-        if (repositoryType.GetById(room.TypeId) == null)
-            return NotFound("Комната с заданным Typeid не найден(тип комнаты неверен)");
+        var hotel = repositoryHotel.GetById(room.HotelId);
+        if (hotel == null)
+            return NotFound("Не найден отель по заданному id");
+        var type = repositoryType.GetById(room.TypeId);
+        if (type == null)
+            return NotFound("Не найден тип комнаты по заданному id");
         var value = mapper.Map<Room>(room);
+        value.Hotel = hotel;
+        value.Type = type;
         if (repositoryRoom.Put(id, value))
             return Ok();
         return NotFound("Объект по заданному id не найден");

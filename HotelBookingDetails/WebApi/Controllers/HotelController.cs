@@ -92,9 +92,9 @@ public class HotelController(IRepository<Hotel> repositoryHotel, IRepository<Res
     [HttpGet("top_5_hotels_by_number_of_bookings")]
     public ActionResult<IEnumerable<HotelsTopFiveDto>> GetTopFiveHotels()
     {
-        var result = (repositoryReserved.GetAll().GroupBy(rr => rr.Room.Hotel).
-                      Select(rr => new HotelsTopFiveDto(rr.Key, rr.Count())))
-                     .OrderBy(h => h.CountOfBookings)
+        var result = repositoryReserved.GetAll().GroupBy(rr => rr.Room.Hotel).
+                      Select(rr => new HotelsTopFiveDto(rr.Key, rr.Count()))
+                     .OrderByDescending(h => h.CountOfBookings)
                      .Take(5);
         return Ok(result);
     }

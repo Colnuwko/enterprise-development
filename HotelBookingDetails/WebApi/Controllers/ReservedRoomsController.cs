@@ -9,7 +9,7 @@ namespace HotelBookingDetails.WebApi.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class ReservedRoomController(IRepository<ReservedRooms> repositoryReservedRooms, IRepository<Room> repositoryRoom, IRepository<Client> repositoryClient,
-    IRepository<Hotel> repositoryHotel, IMapper mapper) : ControllerBase
+        IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Запрос возвращающий полную информацию обо всех бронированиях
@@ -103,7 +103,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
         var result = (from reservedRoom in repositoryReservedRooms.GetAll()
                         where reservedRoom.Room.Hotel.Id == hotelId
                         select reservedRoom.Client)
-                        .OrderBy(c => c.FullName);
+                        .OrderBy(c => c.FullName).Distinct();
         return Ok(result);
     }
 
@@ -115,18 +115,20 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     [HttpGet("get_all_free_rooms/{city}")]
     public ActionResult<IEnumerable<Room>> GetFreeRoomInCity(string city)
     {
-        if (repositoryReservedRooms.GetAll().Count() == 0)
+        var reservedRooms = repositoryReservedRooms.GetAll();
+
+        if (!reservedRooms.Any())
         {
             var rooms = from room in repositoryRoom.GetAll()
                         where room.Hotel.City == city
                         select room;
-            return Ok(rooms);
-        }    
-        var result = from reserverdRoom in repositoryReservedRooms.GetAll()
-                     join hotel in repositoryHotel.GetAll() on reserverdRoom.Room.Hotel.Id equals hotel.Id
-                     where hotel.City == city && reserverdRoom.DateDeparture != null
-                     select reserverdRoom.Room;
 
+            return Ok(rooms);
+        }
+
+        var result = from reserverdRoom in reservedRooms
+                     where reserverdRoom.Room.Hotel.City == city && reserverdRoom.DateDeparture != null
+                     select reserverdRoom.Room;
         return Ok(result);
     }
 
@@ -137,7 +139,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     [HttpGet("get_clients_with_the_longest_hotel_stays")]
     public ActionResult<IEnumerable<ClientTotalDayDto>> GetLongLiversClient()
     {
-        if (repositoryReservedRooms.GetAll().Count() == 0)
+        if (!repositoryReservedRooms.GetAll().Any())
             return NotFound("Информация о бронировании отсутствует. Пожалуйста, добавьте новые записи о бронировании");
         var longerPeriods = repositoryReservedRooms.GetAll()
             .GroupBy(c => c.Client)

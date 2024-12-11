@@ -36,15 +36,23 @@ public class RepositoryReservedRooms(HotelBookingDbContext hotelBookingDbContext
         hotelBookingDbContext.SaveChanges();
     }
 
-    public ReservedRooms? GetById(int id) => hotelBookingDbContext.ReservedRooms.FirstOrDefault(r => r.Id == id);
-
+    public ReservedRooms? GetById(int id)
+    {
+        return hotelBookingDbContext.ReservedRooms
+            .Include(rr => rr.Client)
+            .ThenInclude(c => c.PassportData)
+            .Include(rr => rr.Room)
+            .ThenInclude(r => r.Type)
+            .Include(rr => rr.Room.Hotel)
+            .FirstOrDefault(r => r.Id == id);
+    }
     public IEnumerable<ReservedRooms> GetAll()
     {
         return hotelBookingDbContext.ReservedRooms
             .Include(rr => rr.Client)
-            .ThenInclude(rr => rr.PassportData)
+            .ThenInclude(c => c.PassportData)
             .Include(rr => rr.Room)
-            .ThenInclude(rr => rr.Type)
+            .ThenInclude(r => r.Type)
             .Include(rr => rr.Room.Hotel);
     }
 }

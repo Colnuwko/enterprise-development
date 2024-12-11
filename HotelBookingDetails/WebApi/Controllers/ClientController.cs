@@ -46,7 +46,7 @@ public class ClientController(IRepository<Client> repositoryClient, IRepository<
         if (passport == null)
             return NotFound("Не найдены паспортные данные по заданному id");
         var value = mapper.Map<Client>(client);
-        value.PassportData = passport!;
+        value.PassportData = passport;
         repositoryClient.Post(value);
         return Ok();
     }
@@ -64,6 +64,7 @@ public class ClientController(IRepository<Client> repositoryClient, IRepository<
         if (passport == null)
             return NotFound("Не найдены паспортные данные по заданному id");
         var value = mapper.Map<Client>(client);
+        value.PassportData = passport;
         if (repositoryClient.Put(id, value))
             return Ok();
         return NotFound("Объект по заданному id не найден");
