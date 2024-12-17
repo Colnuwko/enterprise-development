@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HotelBookingDetails.Domain.Repositories;
 using AutoMapper;
-using HotelBookingDetails.WebApi.Dto;
+using HotelBookingDetails.Shared.Dto;
 using HotelBookingDetails.Domain.Entity;
 namespace HotelBookingDetails.WebApi.Controllers;
 

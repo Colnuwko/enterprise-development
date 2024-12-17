@@ -1,6 +1,6 @@
 ﻿using HotelBookingDetails.Domain.Entity;
 
-namespace HotelBookingDetails.WebApi.Dto;
+namespace HotelBookingDetails.Shared.Dto;
 
 /// <summary>
 /// Это кастомный класс для возвращаемого значения аналитического запроса

@@ -24,6 +24,13 @@ builder.Services.AddScoped<IRepository<ReservedRooms>, RepositoryReservedRooms>(
 builder.Services.AddScoped<IRepository<Passport>, RepositoryPassport>();
 builder.Services.AddScoped<IRepository<TypeRoom>, RepositoryTypeRoom>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("BlazorClient", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
 
 builder.Services.AddAutoMapper(typeof(Mapping));
 
@@ -35,6 +42,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("BlazorClient");
 
 app.UseHttpsRedirection();
 app.MapControllers();

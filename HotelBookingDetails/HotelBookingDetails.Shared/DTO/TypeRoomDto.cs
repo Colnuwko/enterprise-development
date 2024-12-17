@@ -1,4 +1,4 @@
-﻿namespace HotelBookingDetails.WebApi.Dto;
+﻿namespace HotelBookingDetails.Shared.Dto;
 
 public class TypeRoomDto
 {

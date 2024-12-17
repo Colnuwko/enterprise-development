@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HotelBookingDetails.WebApi.Dto;
+namespace HotelBookingDetails.Shared.Dto;
 
 public class ClientDto
 {

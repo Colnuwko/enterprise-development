@@ -1,0 +1,61 @@
+﻿@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+
+<Modal @ref="HotelModal">
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Новый отель</ModalTitle>
+                <CloseButton Clicked="CloseModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Field>
+                    <FieldLabel>Название</FieldLabel>
+                    <TextEdit @bind-Text="@NewHotel.Name"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Адрес</FieldLabel>
+                    <TextEdit @bind-Text="@NewHotel.Address"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Город</FieldLabel>
+                    <TextEdit @bind-Text="@NewHotel.City"/>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="CreateHotelAsync">Создать</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback OnHotelAdded { get; set; }
+    
+    private Modal HotelModal { get; set; } = new();
+    
+    private HotelDto NewHotel { get; set; } = new()
+    {
+        Name = "",
+        Address = "",
+        City = ""
+    };
+
+    public async Task Show()
+    {
+        Console.WriteLine(123);
+        await HotelModal.Show();   
+    }
+
+    private async Task CreateHotelAsync()
+    {
+        await Client.CreateHotel(NewHotel);
+        await HotelModal.Hide();
+        await OnHotelAdded.InvokeAsync();
+    }
+
+    private async Task CloseModalAsync()
+    {
+        await HotelModal.Hide();
+    }
+}

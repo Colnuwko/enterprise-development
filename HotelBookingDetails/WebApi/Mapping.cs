@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HotelBookingDetails.Domain.Entity;
-using HotelBookingDetails.WebApi.Dto;
+using HotelBookingDetails.Shared.Dto;
 using HotelBookingDetails.Domain.Repositories;
 namespace HotelBookingDetails.WebApi;
 

@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HotelBookingDetails.Tests\HotelBookingDetails.Tests.csproj" />
     <ProjectReference Include="..\HotelBookingDetails\HotelBookingDetails.Domain.csproj" />
+    <ProjectReference Include="..\HotelBookingDetails.Shared\HotelBookingDetails.Shared.csproj" />
   </ItemGroup>
 
 </Project>
