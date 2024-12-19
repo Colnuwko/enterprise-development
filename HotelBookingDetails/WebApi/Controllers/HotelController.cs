@@ -8,7 +8,7 @@ namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class HotelController(IRepository<Hotel> repositoryHotel, IRepository<ReservedRooms> repositoryReserved, IRepository<Room> repositoryRoom, IMapper mapper) : ControllerBase
+public class HotelController(IRepository<Hotel> repositoryHotel, IRepository<ReservedRoom> repositoryReserved, IRepository<Room> repositoryRoom, IMapper mapper) : ControllerBase
 {
     /// <summary>
     /// Запрос возвращающий список всех отелей

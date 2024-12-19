@@ -1,0 +1,43 @@
+﻿@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Клиенты отеля</h4>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <Field>
+            <FieldLabel>Айди отеля</FieldLabel>
+            <NumericEdit @bind-Value="@_hotelId"/>
+        </Field>
+        <Button Color="Color.Primary" Clicked="GetClientsAsync">Получить</Button>
+        <DataGrid TItem="Domain.Entity.Client" Data="_clients" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn TItem="Domain.Entity.Client" Field="@nameof(Domain.Entity.Client.FullName)" Caption="Имя">
+                </DataGridColumn>
+                <DataGridColumn TItem="Domain.Entity.Client" Field="@nameof(Domain.Entity.Client.PassportSeriesNumber)" Caption="Паспорт">
+                </DataGridColumn>
+                <DataGridColumn TItem="Domain.Entity.Client" Field="@nameof(Domain.Entity.Client.Birthday)" Caption="День рождения">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+
+    private int _hotelId;
+
+    private ICollection<Domain.Entity.Client> _clients = [];
+
+    private async Task GetClientsAsync()
+    {
+        _clients = await Client.GetClientsInHotel(_hotelId);
+        await OnDataChanged.InvokeAsync();
+    }
+}

@@ -51,7 +51,7 @@ public class HotelBookingDetailsData
 
     public List<Room> Rooms;
     public List<Client> Clients;
-    public List<ReservedRooms> ReservedRooms;
+    public List<ReservedRoom> ReservedRooms;
 
     public HotelBookingDetailsData()
     {

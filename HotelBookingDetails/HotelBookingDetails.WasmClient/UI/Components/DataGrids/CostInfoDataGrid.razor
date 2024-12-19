@@ -1,0 +1,40 @@
+﻿@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Максимальная, средняя и минимальная цена комнат для каждого отеля</h4>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="HotelsRoomCostDto" Data="_hotels" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn TItem="HotelsRoomCostDto" Field="CurHotel.Name" Caption="Название">
+                </DataGridColumn>
+                <DataGridColumn TItem="HotelsRoomCostDto" Field="Max" Caption="Максимальная цена">
+                </DataGridColumn>
+                <DataGridColumn TItem="HotelsRoomCostDto" Field="Avg" Caption="Средняя цена">
+                </DataGridColumn>
+                <DataGridColumn TItem="HotelsRoomCostDto" Field="Min" Caption="Минимальная цена">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+    
+    private ICollection<HotelsRoomCostDto> _hotels = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hotels = await Client.CostInfoAboutHotels();
+        await OnDataChanged.InvokeAsync();
+        await base.OnInitializedAsync();
+    }
+}

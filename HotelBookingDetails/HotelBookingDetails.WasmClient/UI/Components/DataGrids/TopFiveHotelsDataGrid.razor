@@ -1,0 +1,40 @@
+﻿@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Топ 5 отелей по количеству бронирований</h4>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="HotelsTopFiveDto" Data="_topFiveHotels" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn TItem="HotelsTopFiveDto" Field="CurHotel.Name" Caption="Название">
+                </DataGridColumn>
+                <DataGridColumn TItem="HotelsTopFiveDto" Field="CurHotel.Address" Caption="Адрес">
+                </DataGridColumn>
+                <DataGridColumn TItem="HotelsTopFiveDto" Field="CurHotel.City" Caption="Город">
+                </DataGridColumn>
+                <DataGridColumn TItem="HotelsTopFiveDto" Field="CountOfBookings" Caption="Количество бронирований">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+    
+    private ICollection<HotelsTopFiveDto> _topFiveHotels = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _topFiveHotels = await Client.GetTopFiveHotels();
+        await OnDataChanged.InvokeAsync();
+        await base.OnInitializedAsync();
+    }
+}

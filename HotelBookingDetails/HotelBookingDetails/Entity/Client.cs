@@ -1,5 +1,6 @@
 ﻿    using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace HotelBookingDetails.Domain.Entity;
 
@@ -15,6 +16,7 @@ public class Client
     [Key]
     [Column("id")]
     [Required]
+    [JsonPropertyName("id")]
     public required int Id { get; set; }
 
     /// <summary>
@@ -22,6 +24,7 @@ public class Client
     /// </summary>
     [Column("full_name")]
     [Required]
+    [JsonPropertyName("full_name")]
     public required string FullName { get; set; }
 
     /// <summary>
@@ -29,6 +32,7 @@ public class Client
     /// </summary>
     [Column("passport_id")]
     [Required]
+    [JsonPropertyName("passport_data")]
     public required Passport PassportData { get; set; }
 
     /// <summary>
@@ -36,5 +40,8 @@ public class Client
     /// </summary>
     [Column("birthday")]
     [Required]  
+    [JsonPropertyName("birthday")]
     public required DateOnly? Birthday { get; set; }
+
+    [JsonIgnore] public string PassportSeriesNumber => $"{PassportData.Series} {PassportData.Number}";
 }

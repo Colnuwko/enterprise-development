@@ -1,0 +1,55 @@
+﻿@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+
+<Modal @ref="_passportModal">
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Новый паспорт</ModalTitle>
+                <CloseButton Clicked="CloseModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Field>
+                    <FieldLabel>Серия</FieldLabel>
+                    <NumericEdit @bind-Value="@_newPassport.Series"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Номер</FieldLabel>
+                    <NumericEdit @bind-Value="@_newPassport.Number"/>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="CreatePassportAsync">Создать</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback OnPassportAdded { get; set; }
+    
+    private Modal _passportModal = new();
+    
+    private PassportDto _newPassport = new()
+    {
+        Number = 0,
+        Series = 0
+    };
+
+    public async Task Show()
+    {
+        await _passportModal.Show();   
+    }
+
+    private async Task CreatePassportAsync()
+    {
+        await Client.CreatePassport(_newPassport);
+        await _passportModal.Hide();
+        await OnPassportAdded.InvokeAsync();
+    }
+
+    private async Task CloseModalAsync()
+    {
+        await _passportModal.Hide();
+    }
+}

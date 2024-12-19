@@ -1,0 +1,91 @@
+﻿@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Клиенты</h4>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreateModal">
+                    Создать
+                </Button>
+            </Column>
+
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="Domain.Entity.Client" Data="_clients" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px" TItem="Domain.Entity.Client" Field="@nameof(Domain.Entity.Client.Id)"
+                                Caption="Действия">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Действия
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => OpenEditPage(context)">
+                                    Редактировать
+                                </DropdownItem>
+                                <DropdownItem Clicked="() => DeleteClientAsync(context)">
+                                    Удалить
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="Domain.Entity.Client" Field="@nameof(Domain.Entity.Client.FullName)" Caption="Имя">
+                </DataGridColumn>
+                <DataGridColumn TItem="Domain.Entity.Client" Field="@nameof(Domain.Entity.Client.PassportSeriesNumber)" Caption="Паспорт">
+                </DataGridColumn>
+                <DataGridColumn TItem="Domain.Entity.Client" Field="@nameof(Domain.Entity.Client.Birthday)" Caption="День рождения">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+<ClientCreateModal @ref="_clientModal" OnClientAdded="@HandleClientAdded"/>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+    
+    private ICollection<Domain.Entity.Client> _clients = [];
+
+    private ClientCreateModal _clientModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshClients();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OpenCreateModal()
+    {
+        await _clientModal.Show();
+    }
+
+    private async Task HandleClientAdded()
+    {
+        await RefreshClients();
+        await OnDataChanged.InvokeAsync();
+    }
+
+    private async Task RefreshClients()
+    {
+        _clients = await Client.GetClients();
+    }
+
+    private void OpenEditPage(Domain.Entity.Client client)
+    {
+        NavManager.NavigateTo($"client/{client.Id}");
+    }
+
+    private async Task DeleteClientAsync(Domain.Entity.Client client)
+    {
+        await Client.DeleteClient(client.Id);
+        await RefreshClients();
+        await OnDataChanged.InvokeAsync();
+    }
+}

@@ -1,0 +1,67 @@
+﻿@page "/passport/{id}"
+@using HotelBookingDetails.Domain.Entity
+@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+@inject IJSRuntime JsRuntime
+
+<Form>
+    <Card>
+        <CardHeader>
+            <Row Class="justify-content-between">
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <h4>Изменить паспорт</h4>
+                </Column>
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <Button Color="Color.Primary" Clicked="UpdateAsync">Сохранить</Button>
+                    <Button Color="Color.Danger" Clicked="DeleteAsync">Удалить</Button>
+                    <Button Color="Color.Secondary" onclick="history.back();">Закрыть</Button>
+                </Column>
+            </Row>
+        </CardHeader>
+        <CardBody>
+            <Field>
+                <FieldLabel>Серия</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedPassport.Series"/>
+            </Field>
+            <Field>
+                <FieldLabel>Номер</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedPassport.Number"/>
+            </Field>
+        </CardBody>
+    </Card>
+</Form>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+ 
+    private Passport _updatedPassport = new()
+    {
+        Id = 0,
+        Series = 0,
+        Number = 0
+    };
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (!int.TryParse(Id, out var id))
+            throw new Exception("Неверный айди паспорта");
+        _updatedPassport = await Client.GetPassport(id);
+        await base.OnInitializedAsync();
+    }
+
+    private async Task DeleteAsync()
+    {
+        await Client.DeletePassport(_updatedPassport.Id);
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+
+    private async Task UpdateAsync()
+    {
+        await Client.UpdatePassport(_updatedPassport.Id, new PassportDto()
+            {
+                Series = _updatedPassport.Series,
+                Number = _updatedPassport.Number
+            });
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+}

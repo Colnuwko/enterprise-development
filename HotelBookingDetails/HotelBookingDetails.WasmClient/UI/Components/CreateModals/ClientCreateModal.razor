@@ -1,0 +1,80 @@
+﻿@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+
+<Modal @ref="_clientModal">
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Новый клиент</ModalTitle>
+                <CloseButton Clicked="CloseModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Field TextColor="TextColor.Warning">@_responseMessage</Field>
+                <Field>
+                    <FieldLabel>Имя</FieldLabel>
+                    <TextEdit @bind-Text="@_newClient.FullName"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Айди паспорта</FieldLabel>
+                    <NumericEdit @bind-Value="@_newClient.PassportDataId"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Год рождения</FieldLabel>
+                    <NumericEdit @bind-Value="@_newClient.BirthdayYear"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Месяц рождения</FieldLabel>
+                    <NumericEdit @bind-Value="@_newClient.BirthdayMonth"/>
+                </Field>
+                <Field>
+                    <FieldLabel>День рождения</FieldLabel>
+                    <NumericEdit @bind-Value="@_newClient.BirthdayDay"/>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="CreateClientAsync">Создать</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback OnClientAdded { get; set; }
+    
+    private Modal _clientModal = new();
+    
+    private ClientDto _newClient = new()
+    {
+        FullName = "",
+        PassportDataId = 0,
+        BirthdayYear = 0,
+        BirthdayMonth = 0,
+        BirthdayDay = 0
+    };
+    
+    private string _responseMessage = "";
+
+    public async Task Show()
+    {
+        await _clientModal.Show();   
+    }
+
+    private async Task CreateClientAsync()
+    {
+        try
+        {
+            await Client.CreateClient(_newClient);
+            await _clientModal.Hide();
+            await OnClientAdded.InvokeAsync();
+        }
+        catch (ApiException e)
+        {
+            _responseMessage = e.Response;
+        }
+    }
+
+    private async Task CloseModalAsync()
+    {
+        await _clientModal.Hide();
+    }
+}

@@ -1,0 +1,94 @@
+﻿@using HotelBookingDetails.Domain.Entity
+@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Комнаты</h4>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreateModal">
+                    Создать
+                </Button>
+            </Column>
+
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="Room" Data="_rooms" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px" TItem="Room" Field="@nameof(Room.Id)"
+                                Caption="Действия">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Действия
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => OpenEditPage(context)">
+                                    Редактировать
+                                </DropdownItem>
+                                <DropdownItem Clicked="() => DeleteRoomAsync(context)">
+                                    Удалить
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="Room" Field="@nameof(Room.TypeName)" Caption="Тип комнаты">
+                </DataGridColumn>
+                <DataGridColumn TItem="Room" Field="@nameof(Room.Capacity)" Caption="Вместимость">
+                </DataGridColumn>
+                <DataGridColumn TItem="Room" Field="@nameof(Room.Cost)" Caption="Цена">
+                </DataGridColumn>
+                <DataGridColumn TItem="Room" Field="@nameof(Room.HotelName)" Caption="Отель">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+<RoomCreateModal @ref="_roomModal" OnRoomAdded="@HandleRoomAdded"/>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+    
+    private ICollection<Room> _rooms = [];
+
+    private RoomCreateModal _roomModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshRooms();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OpenCreateModal()
+    {
+        await _roomModal.Show();
+    }
+
+    private async Task HandleRoomAdded()
+    {
+        await RefreshRooms();
+        await OnDataChanged.InvokeAsync();
+    }
+
+    private async Task RefreshRooms()
+    {
+        _rooms = await Client.GetRooms();
+    }
+
+    private void OpenEditPage(Room room)
+    {
+        NavManager.NavigateTo($"room/{room.Id}");
+    }
+
+    private async Task DeleteRoomAsync(Room room)
+    {
+        await Client.DeleteRoom(room.Id);
+        await RefreshRooms();
+        await OnDataChanged.InvokeAsync();
+    }
+}

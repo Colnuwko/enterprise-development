@@ -1,0 +1,46 @@
+﻿@using HotelBookingDetails.Domain.Entity
+@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Свободные комнаты в выбранном городе</h4>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <Field>
+            <FieldLabel>Город</FieldLabel>
+            <TextEdit @bind-Text="@_city"/>
+        </Field>
+        <Button Color="Color.Primary" Clicked="GetRoomsAsync">Получить</Button>
+        <DataGrid TItem="Room" Data="_rooms" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn TItem="Room" Field="@nameof(Room.TypeName)" Caption="Тип комнаты">
+                </DataGridColumn>
+                <DataGridColumn TItem="Room" Field="@nameof(Room.Capacity)" Caption="Вместимость">
+                </DataGridColumn>
+                <DataGridColumn TItem="Room" Field="@nameof(Room.Cost)" Caption="Цена">
+                </DataGridColumn>
+                <DataGridColumn TItem="Room" Field="@nameof(Room.HotelName)" Caption="Отель">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+
+    private string _city = "";
+
+    private ICollection<Room> _rooms = [];
+
+    private async Task GetRoomsAsync()
+    {
+        _rooms = await Client.GetFreeRoomsInCity(_city);
+        await OnDataChanged.InvokeAsync();
+    }
+}

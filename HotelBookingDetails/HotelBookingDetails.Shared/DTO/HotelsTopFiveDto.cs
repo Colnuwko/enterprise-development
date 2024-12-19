@@ -1,4 +1,5 @@
-﻿using HotelBookingDetails.Domain.Entity;
+﻿using System.Text.Json.Serialization;
+using HotelBookingDetails.Domain.Entity;
 
 namespace HotelBookingDetails.Shared.Dto;
 
@@ -8,12 +9,14 @@ namespace HotelBookingDetails.Shared.Dto;
 /// <remarks>
 /// Структура {Отель, количество бронирований}
 /// </remarks>
-public class HotelsTopFiveDto(Hotel hotel, int countOfBookings)
+public class HotelsTopFiveDto(Hotel curHotel, int countOfBookings)
 {
     /// <summary>
     /// Отель
     /// </summary>
-    public Hotel Hotel { get; set; } = hotel;
+    [JsonPropertyName("curHotel")]
+    public Hotel CurHotel { get; set; } = curHotel;
+
 
     /// <summary>
     /// Количество бронирований

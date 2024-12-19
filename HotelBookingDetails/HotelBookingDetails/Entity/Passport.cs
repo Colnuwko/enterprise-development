@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace HotelBookingDetails.Domain.Entity;
 
@@ -15,6 +16,7 @@ public class Passport
     [Key]
     [Column("id")]
     [Required]
+    [JsonPropertyName("id")]
     public required int Id { get; set; }
 
     /// <summary>
@@ -22,6 +24,7 @@ public class Passport
     /// </summary>
     [Column("number")]
     [Required]
+    [JsonPropertyName("number")]
     public required int Number { get; set; }
 
     /// <summary>
@@ -29,5 +32,6 @@ public class Passport
     /// </summary>
     [Column("series")]
     [Required]
+    [JsonPropertyName("series")]
     public required int Series { get; set; }
 }

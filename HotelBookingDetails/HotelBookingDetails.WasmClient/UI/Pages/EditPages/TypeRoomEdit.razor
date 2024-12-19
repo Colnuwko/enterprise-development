@@ -1,0 +1,61 @@
+﻿@page "/type_room/{id}"
+@using HotelBookingDetails.Domain.Entity
+@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+@inject IJSRuntime JsRuntime
+
+<Form>
+    <Card>
+        <CardHeader>
+            <Row Class="justify-content-between">
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <h4>Изменить тип комнаты</h4>
+                </Column>
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <Button Color="Color.Primary" Clicked="UpdateAsync">Сохранить</Button>
+                    <Button Color="Color.Danger" Clicked="DeleteAsync">Удалить</Button>
+                    <Button Color="Color.Secondary" onclick="history.back();">Закрыть</Button>
+                </Column>
+            </Row>
+        </CardHeader>
+        <CardBody>
+            <Field>
+                <FieldLabel>Название</FieldLabel>
+                <TextEdit @bind-Text="@_updatedTypeRoom.Name"/>
+            </Field>
+        </CardBody>
+    </Card>
+</Form>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+ 
+    private TypeRoom _updatedTypeRoom = new()
+    {
+        Id = 0,
+        Name = ""
+    };
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (!int.TryParse(Id, out var id))
+            throw new Exception("Неверный айди типа комнаты");
+        _updatedTypeRoom = await Client.GetTypeRoom(id);
+        await base.OnInitializedAsync();
+    }
+
+    private async Task DeleteAsync()
+    {
+        await Client.DeleteTypeRoom(_updatedTypeRoom.Id);
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+
+    private async Task UpdateAsync()
+    {
+        await Client.UpdateTypeRoom(_updatedTypeRoom.Id, new TypeRoomDto()
+            {
+                Name = _updatedTypeRoom.Name
+            });
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+}

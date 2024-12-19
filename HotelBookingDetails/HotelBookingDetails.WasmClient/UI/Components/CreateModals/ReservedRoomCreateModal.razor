@@ -1,0 +1,80 @@
+﻿@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+
+<Modal @ref="_reservedRoomModal">
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Новое бронирование</ModalTitle>
+                <CloseButton Clicked="CloseModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Field TextColor="TextColor.Warning">@_responseMessage</Field>
+                <Field>
+                    <FieldLabel>Айди клиента</FieldLabel>
+                    <NumericEdit @bind-Value="@_newReservedRoom.ClientId"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Айди комнаты</FieldLabel>
+                    <NumericEdit @bind-Value="@_newReservedRoom.RoomId"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Дата въезда</FieldLabel>
+                    <TextEdit @bind-Text="@_newReservedRoom.DateArrival"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Дата выезда</FieldLabel>
+                    <TextEdit @bind-Text="@_newReservedRoom.DateDeparture"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Период</FieldLabel>
+                    <NumericEdit @bind-Value="@_newReservedRoom.Period"/>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="CreateRoomAsync">Создать</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback OnReservedRoomAdded { get; set; }
+    
+    private Modal _reservedRoomModal = new();
+    
+    private ReservedRoomsDto _newReservedRoom = new()
+    {
+        ClientId = 0,
+        RoomId = 0,
+        DateArrival = "",
+        DateDeparture = "",
+        Period = 0
+    };
+
+    private string _responseMessage = "";
+
+    public async Task Show()
+    {
+        await _reservedRoomModal.Show();   
+    }
+
+    private async Task CreateRoomAsync()
+    {
+        try
+        {
+            await Client.CreateReservedRoom(_newReservedRoom);
+            await _reservedRoomModal.Hide();
+            await OnReservedRoomAdded.InvokeAsync();
+        }
+        catch (ApiException e)
+        {
+            _responseMessage = e.Response;
+        }
+    }
+
+    private async Task CloseModalAsync()
+    {
+        await _reservedRoomModal.Hide();
+    }
+}

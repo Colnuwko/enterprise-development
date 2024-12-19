@@ -20,7 +20,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IRepository<Client>, RepositoryClient>();
 builder.Services.AddScoped<IRepository<Hotel>, RepositoryHotel>();
 builder.Services.AddScoped<IRepository<Room>, RepositoryRoom>();
-builder.Services.AddScoped<IRepository<ReservedRooms>, RepositoryReservedRooms>();
+builder.Services.AddScoped<IRepository<ReservedRoom>, RepositoryReservedRooms>();
 builder.Services.AddScoped<IRepository<Passport>, RepositoryPassport>();
 builder.Services.AddScoped<IRepository<TypeRoom>, RepositoryTypeRoom>();
 

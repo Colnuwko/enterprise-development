@@ -1,0 +1,40 @@
+﻿@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Клиенты с наибольшим временем проживания</h4>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="ClientTotalDayDto" Data="_clients" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn TItem="ClientTotalDayDto" Field="CurClient.FullName" Caption="Имя">
+                </DataGridColumn>
+                <DataGridColumn TItem="ClientTotalDayDto" Field="CurClient.PassportSeriesNumber" Caption="Паспорт">
+                </DataGridColumn>
+                <DataGridColumn TItem="ClientTotalDayDto" Field="CurClient.Birthday" Caption="День рождения">
+                </DataGridColumn>
+                <DataGridColumn TItem="ClientTotalDayDto" Field="Total" Caption="Суммарное время проживания">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+    
+    private ICollection<ClientTotalDayDto> _clients = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _clients = await Client.GetLongLiversClient();
+        await OnDataChanged.InvokeAsync();
+        await base.OnInitializedAsync();
+    }
+}

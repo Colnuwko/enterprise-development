@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelBookingDetails.Domain.Repositories;
 
-public class RepositoryReservedRooms(HotelBookingDbContext hotelBookingDbContext) : IRepository<ReservedRooms>
+public class RepositoryReservedRooms(HotelBookingDbContext hotelBookingDbContext) : IRepository<ReservedRoom>
 {
-    public bool Put(int id, ReservedRooms reservedRooms)
+    public bool Put(int id, ReservedRoom reservedRooms)
     {
         var oldValue = GetById(id);
         if (oldValue == null)
@@ -30,13 +30,13 @@ public class RepositoryReservedRooms(HotelBookingDbContext hotelBookingDbContext
         return true;
     }
 
-    public void Post(ReservedRooms reservedRooms)
+    public void Post(ReservedRoom reservedRooms)
     {
         hotelBookingDbContext.ReservedRooms.Add(reservedRooms);
         hotelBookingDbContext.SaveChanges();
     }
 
-    public ReservedRooms? GetById(int id)
+    public ReservedRoom? GetById(int id)
     {
         return hotelBookingDbContext.ReservedRooms
             .Include(rr => rr.Client)
@@ -46,7 +46,7 @@ public class RepositoryReservedRooms(HotelBookingDbContext hotelBookingDbContext
             .Include(rr => rr.Room.Hotel)
             .FirstOrDefault(r => r.Id == id);
     }
-    public IEnumerable<ReservedRooms> GetAll()
+    public IEnumerable<ReservedRoom> GetAll()
     {
         return hotelBookingDbContext.ReservedRooms
             .Include(rr => rr.Client)

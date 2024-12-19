@@ -1,0 +1,94 @@
+﻿@page "/reserved_room/{id}"
+@using HotelBookingDetails.Domain.Entity
+@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+@inject IJSRuntime JsRuntime
+
+<Form>
+    <Card>
+        <CardHeader>
+            <Row Class="justify-content-between">
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <h4>Изменить тип комнаты</h4>
+                </Column>
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <Button Color="Color.Primary" Clicked="UpdateAsync">Сохранить</Button>
+                    <Button Color="Color.Danger" Clicked="DeleteAsync">Удалить</Button>
+                    <Button Color="Color.Secondary" onclick="history.back();">Закрыть</Button>
+                </Column>
+            </Row>
+        </CardHeader>
+        <CardBody>
+            <Field TextColor="TextColor.Warning">@_responseMessage</Field>
+            <Field>
+                <FieldLabel>Айди клиента</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedReservedRoom.ClientId"/>
+            </Field>
+            <Field>
+                <FieldLabel>Айди комнаты</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedReservedRoom.RoomId"/>
+            </Field>
+            <Field>
+                <FieldLabel>Дата въезда</FieldLabel>
+                <TextEdit @bind-Text="@_updatedReservedRoom.DateArrival"/>
+            </Field>
+            <Field>
+                <FieldLabel>Дата выезда</FieldLabel>
+                <TextEdit @bind-Text="@_updatedReservedRoom.DateDeparture"/>
+            </Field>
+            <Field>
+                <FieldLabel>Период</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedReservedRoom.Period"/>
+            </Field>
+        </CardBody>
+    </Card>
+</Form>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+
+    private ReservedRoom? _currentReservedRoom;
+ 
+    private ReservedRoomsDto _updatedReservedRoom = new()
+    {
+        ClientId = 0,
+        RoomId = 0,
+        DateArrival = "",
+        DateDeparture = "",
+        Period = 0
+    };
+    
+    private string _responseMessage = "";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (!int.TryParse(Id, out var id))
+            throw new Exception("Неверный айди бронирования");
+        _currentReservedRoom = await Client.GetReservedRoom(id);
+        _updatedReservedRoom.ClientId = _currentReservedRoom.Client.Id;
+        _updatedReservedRoom.RoomId = _currentReservedRoom.Room.Id;
+        _updatedReservedRoom.DateArrival = _currentReservedRoom.DateArrival.ToString("yyyy-MM-dd");
+        _updatedReservedRoom.DateDeparture = _currentReservedRoom.DateDeparture!.Value.ToString("yyyy-MM-dd");
+        _updatedReservedRoom.Period = _currentReservedRoom.Period;
+        await base.OnInitializedAsync();
+    }
+
+    private async Task DeleteAsync()
+    {
+        await Client.DeleteReservedRoom(_currentReservedRoom!.Id);
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+
+    private async Task UpdateAsync()
+    {
+        try
+        {
+            await Client.UpdateReservedRoom(_currentReservedRoom!.Id, _updatedReservedRoom);
+            await JsRuntime.InvokeVoidAsync("history.back");
+        }
+        catch (ApiException e)
+        {
+            _responseMessage = e.Response;
+        }
+    }
+}

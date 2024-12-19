@@ -1,0 +1,75 @@
+﻿@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+
+<Modal @ref="_roomModal">
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Новая комната</ModalTitle>
+                <CloseButton Clicked="CloseModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Field TextColor="TextColor.Warning">@_responseMessage</Field>
+                <Field>
+                    <FieldLabel>Айди типа комнаты</FieldLabel>
+                    <NumericEdit @bind-Value="@_newRoom.TypeId"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Вместимость</FieldLabel>
+                    <NumericEdit @bind-Value="@_newRoom.Capacity"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Цена</FieldLabel>
+                    <NumericEdit @bind-Value="@_newRoom.Cost"/>
+                </Field>
+                <Field>
+                    <FieldLabel>Айди отеля</FieldLabel>
+                    <NumericEdit @bind-Value="@_newRoom.HotelId"/>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="CreateRoomAsync">Создать</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback OnRoomAdded { get; set; }
+    
+    private Modal _roomModal = new();
+    
+    private RoomDto _newRoom = new()
+    {
+        TypeId = 0,
+        Capacity = 0,
+        Cost = 0,
+        HotelId = 0
+    };
+
+    private string _responseMessage = "";
+
+    public async Task Show()
+    {
+        await _roomModal.Show();   
+    }
+
+    private async Task CreateRoomAsync()
+    {
+        try
+        {
+            await Client.CreateRoom(_newRoom);
+            await _roomModal.Hide();
+            await OnRoomAdded.InvokeAsync();
+        }
+        catch (ApiException e)
+        {
+            _responseMessage = e.Response;
+        }
+    }
+
+    private async Task CloseModalAsync()
+    {
+        await _roomModal.Hide();
+    }
+}

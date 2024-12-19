@@ -1,0 +1,50 @@
+﻿@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+
+<Modal @ref="_typeRoomModal">
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Новый тип комнаты</ModalTitle>
+                <CloseButton Clicked="CloseModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Field>
+                    <FieldLabel>Название</FieldLabel>
+                    <TextEdit @bind-Text="@_newTypeRoom.Name"/>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="CreateTypeRoomAsync">Создать</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback OnTypeRoomAdded { get; set; }
+    
+    private Modal _typeRoomModal = new();
+    
+    private TypeRoomDto _newTypeRoom = new()
+    {
+        Name = ""
+    };
+
+    public async Task Show()
+    {
+        await _typeRoomModal.Show();   
+    }
+
+    private async Task CreateTypeRoomAsync()
+    {
+        await Client.CreateTypeRoom(_newTypeRoom);
+        await _typeRoomModal.Hide();
+        await OnTypeRoomAdded.InvokeAsync();
+    }
+
+    private async Task CloseModalAsync()
+    {
+        await _typeRoomModal.Hide();
+    }
+}

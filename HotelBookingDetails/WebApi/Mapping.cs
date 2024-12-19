@@ -12,7 +12,7 @@ public class Mapping : Profile
             .ForMember("Birthday", opt => opt.MapFrom(c => new DateOnly(c.BirthdayYear, c.BirthdayMonth, c.BirthdayDay)));
         CreateMap<Hotel, HotelDto>().ReverseMap();
         CreateMap<Room, RoomDto>().ReverseMap();
-        CreateMap<ReservedRooms, ReservedRoomsDto>().ReverseMap()
+        CreateMap<ReservedRoom, ReservedRoomsDto>().ReverseMap()
             .ForMember("DateArrival", opt => opt.MapFrom(r => DateOnly.ParseExact(r.DateArrival, "yyyy-mm-dd")))
             .ForMember("DateDeparture", opt => opt.MapFrom(r => Converter(r.DateDeparture)));
         CreateMap<TypeRoom, TypeRoomDto>().ReverseMap();

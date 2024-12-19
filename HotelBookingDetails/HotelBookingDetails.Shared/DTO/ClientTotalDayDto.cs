@@ -1,4 +1,5 @@
-﻿using HotelBookingDetails.Domain.Entity;
+﻿using System.Text.Json.Serialization;
+using HotelBookingDetails.Domain.Entity;
 
 namespace HotelBookingDetails.Shared.Dto;
 
@@ -8,12 +9,13 @@ namespace HotelBookingDetails.Shared.Dto;
 /// <remarks>
 /// Структура {суммарное время проживания, Клиент}
 /// </remarks>
-public class ClientTotalDayDto(Client client, int total)
+public class ClientTotalDayDto(Client curClient, int total)
 {
     /// <summary>
     /// Клиент
     /// </summary>
-    public Client Client { get; set; } = client;
+    [JsonPropertyName("curClient")]
+    public Client CurClient { get; set; } = curClient;
 
     /// <summary>
     /// суммарное время проживания

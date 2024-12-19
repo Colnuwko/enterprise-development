@@ -1,0 +1,93 @@
+﻿@page "/client/{id}"
+@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+@inject IJSRuntime JsRuntime
+
+<Form>
+    <Card>
+        <CardHeader>
+            <Row Class="justify-content-between">
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <h4>Изменить клиента</h4>
+                </Column>
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <Button Color="Color.Primary" Clicked="UpdateAsync">Сохранить</Button>
+                    <Button Color="Color.Danger" Clicked="DeleteAsync">Удалить</Button>
+                    <Button Color="Color.Secondary" onclick="history.back();">Закрыть</Button>
+                </Column>
+            </Row>
+        </CardHeader>
+        <CardBody>
+            <Field TextColor="TextColor.Warning">@_responseMessage</Field>
+            <Field>
+                <FieldLabel>Имя</FieldLabel>
+                <TextEdit @bind-Text="@_updatedClient.FullName"/>
+            </Field>
+            <Field>
+                <FieldLabel>Айди паспорта</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedClient.PassportDataId"/>
+            </Field>
+            <Field>
+                <FieldLabel>Год рождения</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedClient.BirthdayYear"/>
+            </Field>
+            <Field>
+                <FieldLabel>Месяц рождения</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedClient.BirthdayMonth"/>
+            </Field>
+            <Field>
+                <FieldLabel>День рождения</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedClient.BirthdayDay"/>
+            </Field>
+        </CardBody>
+    </Card>
+</Form>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+
+    private Domain.Entity.Client? _currentClient;
+
+    private ClientDto _updatedClient = new()
+    {
+        FullName = "",
+        PassportDataId = 0,
+        BirthdayYear = 0,
+        BirthdayMonth = 0,
+        BirthdayDay = 0
+    };
+
+    private string _responseMessage = "";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (!int.TryParse(Id, out var id))
+            throw new Exception("Неверный айди клиента");
+        _currentClient = await Client.GetClient(id);
+        _updatedClient.FullName = _currentClient.FullName;
+        _updatedClient.PassportDataId = _currentClient.PassportData.Id;
+        _updatedClient.BirthdayDay = _currentClient.Birthday!.Value.Day;
+        _updatedClient.BirthdayMonth = _currentClient.Birthday!.Value.Month;
+        _updatedClient.BirthdayYear = _currentClient.Birthday!.Value.Year;
+        await base.OnInitializedAsync();
+    }
+
+    private async Task DeleteAsync()
+    {
+        await Client.DeleteClient(_currentClient!.Id);
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+
+    private async Task UpdateAsync()
+    {
+        try
+        {
+            await Client.UpdateClient(_currentClient!.Id, _updatedClient);
+            await JsRuntime.InvokeVoidAsync("history.back");
+        }
+        catch(ApiException e)
+        {
+            _responseMessage = e.Response;
+        }
+    }
+}

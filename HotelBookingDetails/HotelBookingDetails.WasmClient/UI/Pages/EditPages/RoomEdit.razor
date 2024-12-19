@@ -1,0 +1,88 @@
+﻿@page "/room/{id}"
+@using HotelBookingDetails.Domain.Entity
+@using HotelBookingDetails.Shared.Dto
+@inject ApiClientWrapper Client
+@inject IJSRuntime JsRuntime
+
+<Form>
+    <Card>
+        <CardHeader>
+            <Row Class="justify-content-between">
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <h4>Изменить тип комнаты</h4>
+                </Column>
+                <Column ColumnSize="ColumnSize.IsAuto">
+                    <Button Color="Color.Primary" Clicked="UpdateAsync">Сохранить</Button>
+                    <Button Color="Color.Danger" Clicked="DeleteAsync">Удалить</Button>
+                    <Button Color="Color.Secondary" onclick="history.back();">Закрыть</Button>
+                </Column>
+            </Row>
+        </CardHeader>
+        <CardBody>
+            <Field TextColor="TextColor.Warning">@_responseMessage</Field>
+            <Field>
+                <FieldLabel>Айди типа комнаты</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedRoom.TypeId"/>
+            </Field>
+            <Field>
+                <FieldLabel>Вместимость</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedRoom.Capacity"/>
+            </Field>
+            <Field>
+                <FieldLabel>Цена</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedRoom.Cost"/>
+            </Field>
+            <Field>
+                <FieldLabel>Айди отеля</FieldLabel>
+                <NumericEdit @bind-Value="@_updatedRoom.HotelId"/>
+            </Field>
+        </CardBody>
+    </Card>
+</Form>
+
+@code {
+    [Parameter] public required string Id { get; set; }
+
+    private Room? _currentRoom;
+
+    private RoomDto _updatedRoom = new()
+    {
+        TypeId = 0,
+        Capacity = 0,
+        Cost = 0,
+        HotelId = 0
+    };
+
+    private string _responseMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!int.TryParse(Id, out var id))
+            throw new Exception("Неверный айди комнаты");
+        _currentRoom = await Client.GetRoom(id);
+        _updatedRoom.TypeId = _currentRoom.Type.Id;
+        _updatedRoom.Capacity = _currentRoom.Capacity;
+        _updatedRoom.Cost = _currentRoom.Cost;
+        _updatedRoom.HotelId = _currentRoom.Hotel.Id;
+        await base.OnInitializedAsync();
+    }
+
+    private async Task DeleteAsync()
+    {
+        await Client.DeleteRoom(_currentRoom!.Id);
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+
+    private async Task UpdateAsync()
+    {
+        try
+        {
+            await Client.UpdateRoom(_currentRoom!.Id, _updatedRoom);
+            await JsRuntime.InvokeVoidAsync("history.back");
+        }
+        catch (ApiException e)
+        {
+            _responseMessage = e.Response;
+        }
+    }
+}

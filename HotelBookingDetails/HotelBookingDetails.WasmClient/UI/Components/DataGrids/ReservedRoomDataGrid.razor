@@ -1,0 +1,96 @@
+﻿@using HotelBookingDetails.Domain.Entity
+@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Бронирования</h4>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreateModal">
+                    Создать
+                </Button>
+            </Column>
+
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="ReservedRoom" Data="_reservedRooms" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px" TItem="ReservedRoom" Field="@nameof(ReservedRoom.Id)"
+                                Caption="Действия">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Действия
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => OpenEditPage(context)">
+                                    Редактировать
+                                </DropdownItem>
+                                <DropdownItem Clicked="() => DeleteReservedRoomAsync(context)">
+                                    Удалить
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="ReservedRoom" Field="@nameof(ReservedRoom.ClientName)" Caption="Клиент">
+                </DataGridColumn>
+                <DataGridColumn TItem="ReservedRoom" Field="@nameof(ReservedRoom.RoomNumber)" Caption="Номер комнаты">
+                </DataGridColumn>
+                <DataGridColumn TItem="ReservedRoom" Field="@nameof(ReservedRoom.DateArrival)" Caption="Дата въезда">
+                </DataGridColumn>
+                <DataGridColumn TItem="ReservedRoom" Field="@nameof(ReservedRoom.DateDeparture)" Caption="Дата выезда">
+                </DataGridColumn>
+                <DataGridColumn TItem="ReservedRoom" Field="@nameof(ReservedRoom.Period)" Caption="Период">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+<ReservedRoomCreateModal @ref="_reservedRoomModal" OnReservedRoomAdded="@HandleReservedRoomAdded"/>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+    
+    private ICollection<ReservedRoom> _reservedRooms = [];
+
+    private ReservedRoomCreateModal _reservedRoomModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshReservedRooms();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OpenCreateModal()
+    {
+        await _reservedRoomModal.Show();
+    }
+
+    private async Task HandleReservedRoomAdded()
+    {
+        await RefreshReservedRooms();
+        await OnDataChanged.InvokeAsync();
+    }
+
+    private async Task RefreshReservedRooms()
+    {
+        _reservedRooms = await Client.GetReservedRooms();
+    }
+
+    private void OpenEditPage(ReservedRoom room)
+    {
+        NavManager.NavigateTo($"reserved_room/{room.Id}");
+    }
+
+    private async Task DeleteReservedRoomAsync(ReservedRoom room)
+    {
+        await Client.DeleteReservedRoom(room.Id);
+        await RefreshReservedRooms();
+        await OnDataChanged.InvokeAsync();
+    }
+}

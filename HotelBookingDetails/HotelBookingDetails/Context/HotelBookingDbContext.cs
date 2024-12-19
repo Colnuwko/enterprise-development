@@ -11,7 +11,7 @@ public class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext> optio
     public DbSet<Client> Clients { get; set; }
     public DbSet<Hotel> Hotels { get; set; }
     public DbSet<Passport> Passports { get; set; }
-    public DbSet<ReservedRooms> ReservedRooms { get; set; }
+    public DbSet<ReservedRoom> ReservedRooms { get; set; }
     public DbSet<Room> Rooms { get; set; }
     public DbSet<TypeRoom> TypeRooms { get; set; }
 
@@ -24,12 +24,12 @@ public class HotelBookingDbContext(DbContextOptions<HotelBookingDbContext> optio
                 .WithMany()
                 .HasForeignKey("passport_id")
                 .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<ReservedRooms>()
+        modelBuilder.Entity<ReservedRoom>()
             .HasOne(rr => rr.Client)
                 .WithMany()
                 .HasForeignKey("client_id")
                 .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<ReservedRooms>()
+        modelBuilder.Entity<ReservedRoom>()
             .HasOne(rr => rr.Room)
                 .WithMany()
                 .HasForeignKey("room_id")

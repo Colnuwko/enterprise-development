@@ -8,7 +8,7 @@ namespace HotelBookingDetails.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ReservedRoomController(IRepository<ReservedRooms> repositoryReservedRooms, IRepository<Room> repositoryRoom, IRepository<Client> repositoryClient,
+public class ReservedRoomController(IRepository<ReservedRoom> repositoryReservedRooms, IRepository<Room> repositoryRoom, IRepository<Client> repositoryClient,
         IMapper mapper) : ControllerBase
 {
     /// <summary>
@@ -16,7 +16,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     /// </summary>
     /// <returns>список бронирований</returns>
     [HttpGet]
-    public ActionResult<IEnumerable<ReservedRooms>> Get()
+    public ActionResult<IEnumerable<ReservedRoom>> Get()
     {
         return Ok(repositoryReservedRooms.GetAll());
     }
@@ -27,7 +27,7 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     /// <param name="id"></param>
     /// <returns>Полную информацию о бронировании</returns>
     [HttpGet("{id}")]
-    public ActionResult<ReservedRooms> Get(int id)
+    public ActionResult<ReservedRoom> Get(int id)
     {
         var reservedRoom = repositoryReservedRooms.GetById(id);
         if (reservedRoom == null)
@@ -43,17 +43,24 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     [HttpPost]
     public IActionResult Post([FromBody] ReservedRoomsDto reservedRoom)
     {
-        var value = mapper.Map<ReservedRooms>(reservedRoom);
-        var client = repositoryClient.GetById(reservedRoom.ClientId);
-        var room = repositoryRoom.GetById(reservedRoom.RoomId);
-        if (client == null)
-            return NotFound("Клиент не найден по заданному id");
-        value.Client = client;
-        if (room == null)
-            return NotFound("Комната по заданному id не найдена");
-        value.Room = room;
-        repositoryReservedRooms.Post(value);
-        return Ok();
+        try
+        {
+            var value = mapper.Map<ReservedRoom>(reservedRoom);
+            var client = repositoryClient.GetById(reservedRoom.ClientId);
+            var room = repositoryRoom.GetById(reservedRoom.RoomId);
+            if (client == null)
+                return NotFound("Клиент не найден по заданному id");
+            value.Client = client;
+            if (room == null)
+                return NotFound("Комната по заданному id не найдена");
+            value.Room = room;
+            repositoryReservedRooms.Post(value);
+            return Ok();
+        }
+        catch (AutoMapperMappingException)
+        {
+            return BadRequest("Неверно указан формат дат, ожидается гггг-мм-дд");
+        }
     }
 
     /// <summary>
@@ -65,18 +72,25 @@ public class ReservedRoomController(IRepository<ReservedRooms> repositoryReserve
     [HttpPut("{id}")]
     public IActionResult Put(int id, [FromBody] ReservedRoomsDto reservedRoom)
     {
-        var value = mapper.Map<ReservedRooms>(reservedRoom);
-        var client = repositoryClient.GetById(reservedRoom.ClientId);
-        var room = repositoryRoom.GetById(reservedRoom.RoomId);
-        if (client == null)
-            return NotFound("Клиент не найден по заданному id");
-        value.Client = client;
-        if (room == null)
-            return NotFound("Комната по заданному id не найдена");
-        value.Room = room;
-        if (repositoryReservedRooms.Put(id, value))
-            return Ok();
-        return NotFound("Объект по заданному id не найден");
+        try
+        {
+            var value = mapper.Map<ReservedRoom>(reservedRoom);
+                    var client = repositoryClient.GetById(reservedRoom.ClientId);
+                    var room = repositoryRoom.GetById(reservedRoom.RoomId);
+                    if (client == null)
+                        return NotFound("Клиент не найден по заданному id");
+                    value.Client = client;
+                    if (room == null)
+                        return NotFound("Комната по заданному id не найдена");
+                    value.Room = room;
+                    if (repositoryReservedRooms.Put(id, value))
+                        return Ok();
+                    return NotFound("Объект по заданному id не найден");
+        }
+        catch (AutoMapperMappingException)
+        {
+            return BadRequest("Неверно указан формат дат, ожидается гггг-мм-дд");
+        }
     }
 
     /// <summary>

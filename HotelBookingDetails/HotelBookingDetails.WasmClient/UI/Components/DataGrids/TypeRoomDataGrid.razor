@@ -1,0 +1,88 @@
+﻿@using HotelBookingDetails.Domain.Entity
+@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Типы комнат</h4>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreateModal">
+                    Создать
+                </Button>
+            </Column>
+
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="TypeRoom" Data="_typeRooms" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px" TItem="TypeRoom" Field="@nameof(TypeRoom.Id)"
+                                Caption="Действия">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Действия
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => OpenEditPage(context)">
+                                    Редактировать
+                                </DropdownItem>
+                                <DropdownItem Clicked="() => DeleteTypeRoomAsync(context)">
+                                    Удалить
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="TypeRoom" Field="@nameof(TypeRoom.Name)" Caption="Название">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+<TypeRoomCreateModal @ref="_typeRoomModal" OnTypeRoomAdded="@HandleTypeRoomAdded"/>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+    
+    private ICollection<TypeRoom> _typeRooms = [];
+
+    private TypeRoomCreateModal _typeRoomModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshTypeRooms();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OpenCreateModal()
+    {
+        await _typeRoomModal.Show();
+    }
+
+    private async Task HandleTypeRoomAdded()
+    {
+        await RefreshTypeRooms();
+        await OnDataChanged.InvokeAsync();
+    }
+
+    private async Task RefreshTypeRooms()
+    {
+        _typeRooms = await Client.GetTypeRooms();
+    }
+
+    private void OpenEditPage(TypeRoom type)
+    {
+        NavManager.NavigateTo($"type_room/{type.Id}");
+    }
+
+    private async Task DeleteTypeRoomAsync(TypeRoom type)
+    {
+        await Client.DeleteTypeRoom(type.Id);
+        await RefreshTypeRooms();
+        await OnDataChanged.InvokeAsync();
+    }
+}

@@ -1,4 +1,5 @@
-﻿using HotelBookingDetails.Domain.Entity;
+﻿using System.Text.Json.Serialization;
+using HotelBookingDetails.Domain.Entity;
 
 namespace HotelBookingDetails.Shared.Dto;
 
@@ -8,12 +9,13 @@ namespace HotelBookingDetails.Shared.Dto;
 /// <remarks>
 /// Структура {Минимальная цена, Максимальная цена, Средняя цена, Отель}
 /// </remarks>
-public class HotelsRoomCostDto(Hotel hotel, int min, int max, double avg)
+public class HotelsRoomCostDto(Hotel curHotel, int min, int max, double avg)
 {
     /// <summary>
     /// Отель
     /// </summary>
-    public Hotel Hotel { get; set; } = hotel;
+    [JsonPropertyName("curHotel")]
+    public Hotel CurHotel { get; set; } = curHotel;
 
     /// <summary>
     /// Минимальная цена

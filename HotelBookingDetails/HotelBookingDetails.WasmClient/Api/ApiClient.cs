@@ -78,7 +78,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Client>> ClientAllAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Domain.Entity.Client>> ClientAllAsync()
         {
             return ClientAllAsync(System.Threading.CancellationToken.None);
         }
@@ -89,7 +89,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Client>> ClientAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Domain.Entity.Client>> ClientAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -130,7 +130,7 @@ namespace HotelBookingDetails.WasmClient.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<Client>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<Domain.Entity.Client>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -244,7 +244,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<Client> ClientGETAsync(int id)
+        public virtual System.Threading.Tasks.Task<Domain.Entity.Client> ClientGETAsync(int id)
         {
             return ClientGETAsync(id, System.Threading.CancellationToken.None);
         }
@@ -255,7 +255,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Client> ClientGETAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<Domain.Entity.Client> ClientGETAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -300,7 +300,7 @@ namespace HotelBookingDetails.WasmClient.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Client>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<Domain.Entity.Client>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1006,7 +1006,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<Passport> PassportGETAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Passport>> PassportGETAsync()
         {
             return PassportGETAsync(System.Threading.CancellationToken.None);
         }
@@ -1017,7 +1017,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<Passport> PassportGETAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Passport>> PassportGETAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1058,7 +1058,7 @@ namespace HotelBookingDetails.WasmClient.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<Passport>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<Passport>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1428,7 +1428,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ReservedRooms>> ReservedRoomAllAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ReservedRoom>> ReservedRoomAllAsync()
         {
             return ReservedRoomAllAsync(System.Threading.CancellationToken.None);
         }
@@ -1439,7 +1439,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ReservedRooms>> ReservedRoomAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ReservedRoom>> ReservedRoomAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1480,7 +1480,7 @@ namespace HotelBookingDetails.WasmClient.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ReservedRooms>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ReservedRoom>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1594,7 +1594,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ReservedRooms> ReservedRoomGETAsync(int id)
+        public virtual System.Threading.Tasks.Task<ReservedRoom> ReservedRoomGETAsync(int id)
         {
             return ReservedRoomGETAsync(id, System.Threading.CancellationToken.None);
         }
@@ -1605,7 +1605,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ReservedRooms> ReservedRoomGETAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ReservedRoom> ReservedRoomGETAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -1650,7 +1650,7 @@ namespace HotelBookingDetails.WasmClient.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ReservedRooms>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ReservedRoom>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3333,7 +3333,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Client>> HotelAsync(int hotelId)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Domain.Entity.Client>> HotelAsync(int hotelId)
         {
             return HotelAsync(hotelId, System.Threading.CancellationToken.None);
         }
@@ -3344,7 +3344,7 @@ namespace HotelBookingDetails.WasmClient.Api
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Client>> HotelAsync(int hotelId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<Domain.Entity.Client>> HotelAsync(int hotelId, System.Threading.CancellationToken cancellationToken)
         {
             if (hotelId == null)
                 throw new System.ArgumentNullException("hotelId");
@@ -3389,7 +3389,7 @@ namespace HotelBookingDetails.WasmClient.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<Client>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<Domain.Entity.Client>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);

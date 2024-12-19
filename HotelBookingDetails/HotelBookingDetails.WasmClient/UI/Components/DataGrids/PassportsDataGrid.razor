@@ -1,0 +1,90 @@
+﻿@using HotelBookingDetails.Domain.Entity
+@inject ApiClientWrapper Client
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Паспорта</h4>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="OpenCreateModal">
+                    Создать
+                </Button>
+            </Column>
+
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="Passport" Data="_passports" Responsive Striped>
+            <DataGridColumns>
+                <DataGridColumn Width="150px" TItem="Passport" Field="@nameof(Passport.Id)"
+                                Caption="Действия">
+                    <DisplayTemplate>
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Действия
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => OpenEditPage(context)">
+                                    Редактировать
+                                </DropdownItem>
+                                <DropdownItem Clicked="() => DeletePassportAsync(context)">
+                                    Удалить
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="Passport" Field="@nameof(Passport.Series)" Caption="Серия">
+                </DataGridColumn>
+                <DataGridColumn TItem="Passport" Field="@nameof(Passport.Number)" Caption="Номер">
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+<PassportCreateModal @ref="_passportModal" OnPassportAdded="@HandlePassportAdded"/>
+
+@code {
+    [Parameter] public EventCallback OnDataChanged { get; set; }
+    
+    private ICollection<Passport> _passports = [];
+
+    private PassportCreateModal _passportModal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshPassports();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task OpenCreateModal()
+    {
+        await _passportModal.Show();
+    }
+
+    private async Task HandlePassportAdded()
+    {
+        await RefreshPassports();
+        await OnDataChanged.InvokeAsync();
+    }
+
+    private async Task RefreshPassports()
+    {
+        _passports = await Client.GetPassports();
+    }
+
+    private void OpenEditPage(Passport passport)
+    {
+        NavManager.NavigateTo($"passport/{passport.Id}");
+    }
+
+    private async Task DeletePassportAsync(Passport passport)
+    {
+        await Client.DeletePassport(passport.Id);
+        await RefreshPassports();
+        await OnDataChanged.InvokeAsync();
+    }
+}
